@@ -7,7 +7,7 @@ from .models import LoginRequest, LoginResponse, SemanticBootstrap
 from .semantics import SemanticService
 from .settings import Settings, get_settings
 
-app = FastAPI(title="insinno Service Portal Proxy", version="0.3.0")
+app = FastAPI(title="insinno Service Portal Proxy", version="0.4.0")
 
 settings = get_settings()
 app.add_middleware(
@@ -23,12 +23,20 @@ def semantic_service(
     settings: Settings = Depends(get_settings),
     client: ICoreClient = Depends(get_icore_client),
 ) -> SemanticService:
-    return SemanticService(settings.semantics_config_path, client)
+    return SemanticService(
+        settings.semantics_config_path,
+        client,
+        use_mock_data=settings.use_mock_data,
+        mock_data_path=settings.mock_data_path,
+    )
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:
-    return {"status": "ok"}
+async def health() -> dict[str, str | bool]:
+    return {
+        "status": "ok",
+        "mockData": settings.use_mock_data,
+    }
 
 
 @app.post("/auth/login", response_model=LoginResponse)
