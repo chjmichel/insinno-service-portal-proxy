@@ -7,12 +7,13 @@ from .models import LoginRequest, LoginResponse, SemanticBootstrap
 from .semantics import SemanticService
 from .settings import Settings, get_settings
 
-app = FastAPI(title="insinno Service Portal Proxy", version="0.6.0")
+app = FastAPI(title="insinno Service Portal Proxy", version="0.6.1")
 
 settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
+    allow_origin_regex=settings.cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
