@@ -28,6 +28,7 @@ class ICoreClient:
         if client_id:
             data["clientId"] = client_id
 
+        # Mandatory for iCore login. Without this exact Origin header login fails.
         headers = {
             "Origin": self.settings.icore_login_origin,
             "Content-Type": "application/x-www-form-urlencoded",
@@ -38,16 +39,15 @@ class ICoreClient:
             "/login",
             headers=headers,
             data=data,
-            include_api_path=True,
         )
         return self._json(response)
 
     async def get_current_user(self, token: str) -> dict[str, Any]:
+        # AUTHENTICATION.md defines /auth/userinfo as the token validation endpoint.
         response = await self._request(
             "GET",
-            "/loggedUser",
+            "/auth/userinfo",
             headers=self._bearer(token),
-            include_api_path=True,
         )
         return self._json(response)
 
@@ -64,13 +64,11 @@ class ICoreClient:
             path,
             headers=self._bearer(token),
             params=params,
-            include_api_path=True,
         )
         return self._json(response)
 
-    async def _request(self, method: str, path: str, include_api_path: bool, **kwargs: Any) -> httpx.Response:
-        base = self.settings.icore_api_url if include_api_path else self.settings.icore_base_url.rstrip("/")
-        url = f"{base}/{path.lstrip('/')}"
+    async def _request(self, method: str, path: str, **kwargs: Any) -> httpx.Response:
+        url = f"{self.settings.icore_api_url}/{path.lstrip('/')}"
         try:
             async with httpx.AsyncClient(
                 timeout=self.settings.icore_timeout_seconds,

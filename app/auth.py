@@ -1,7 +1,7 @@
 import time
 from typing import Any
 
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from .icore_client import ICoreClient, ICoreError
@@ -16,7 +16,6 @@ def get_icore_client(settings: Settings = Depends(get_settings)) -> ICoreClient:
 
 
 async def require_user(
-    request: Request,
     credentials: HTTPAuthorizationCredentials | None = Depends(security),
     settings: Settings = Depends(get_settings),
     client: ICoreClient = Depends(get_icore_client),
@@ -24,14 +23,10 @@ async def require_user(
     if not settings.require_authentication:
         return {"username": "development", "_token": ""}
 
-    token = None
-    if credentials and credentials.scheme.lower() == "bearer":
-        token = credentials.credentials
-    if not token:
-        token = request.cookies.get(settings.auth_cookie_name)
-    if not token:
-        raise HTTPException(status_code=401, detail="Authentication required")
+    if credentials is None or credentials.scheme.lower() != "bearer":
+        raise HTTPException(status_code=401, detail="Bearer token required")
 
+    token = credentials.credentials
     now = time.monotonic()
     cached = _token_cache.get(token)
     if cached and cached[0] > now:

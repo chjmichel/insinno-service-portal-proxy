@@ -10,7 +10,8 @@ class LoginRequest(BaseModel):
 
 
 class LoginResponse(BaseModel):
-    token_type: str = "cookie"
+    access_token: str
+    token_type: str = "bearer"
     expires_in: int | None = None
     user: dict[str, Any] | None = None
 

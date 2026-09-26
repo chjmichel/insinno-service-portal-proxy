@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .auth import get_icore_client, invalidate_token, require_user
@@ -7,7 +7,7 @@ from .models import LoginRequest, LoginResponse, SemanticBootstrap
 from .semantics import SemanticService
 from .settings import Settings, get_settings
 
-app = FastAPI(title="insinno Service Portal Proxy", version="0.2.0")
+app = FastAPI(title="insinno Service Portal Proxy", version="0.3.0")
 
 settings = get_settings()
 app.add_middleware(
@@ -34,8 +34,6 @@ async def health() -> dict[str, str]:
 @app.post("/auth/login", response_model=LoginResponse)
 async def login(
     request: LoginRequest,
-    response: Response,
-    settings: Settings = Depends(get_settings),
     client: ICoreClient = Depends(get_icore_client),
 ) -> LoginResponse:
     try:
@@ -50,17 +48,11 @@ async def login(
             raise HTTPException(status_code=502, detail="iCore login response contains no access token")
 
         user = await client.get_current_user(token)
-        expires_in = payload.get("expiresIn") or payload.get("expires_in") or settings.auth_cookie_max_age
-        response.set_cookie(
-            key=settings.auth_cookie_name,
-            value=token,
-            httponly=True,
-            secure=settings.auth_cookie_secure,
-            samesite=settings.auth_cookie_samesite,
-            max_age=int(expires_in),
-            path="/",
+        return LoginResponse(
+            access_token=token,
+            expires_in=payload.get("expiresIn") or payload.get("expires_in"),
+            user=user,
         )
-        return LoginResponse(expires_in=int(expires_in), user=user)
     except ICoreError as exc:
         raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
 
@@ -71,15 +63,10 @@ async def me(user: dict = Depends(require_user)) -> dict:
 
 
 @app.post("/auth/logout")
-async def logout(
-    response: Response,
-    user: dict = Depends(require_user),
-    settings: Settings = Depends(get_settings),
-) -> dict[str, bool]:
+async def logout(user: dict = Depends(require_user)) -> dict[str, bool]:
     token = user.get("_token")
     if token:
         invalidate_token(token)
-    response.delete_cookie(settings.auth_cookie_name, path="/")
     return {"success": True}
 
 

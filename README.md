@@ -2,48 +2,41 @@
 
 Backend-for-frontend and semantic proxy for the iCore Service Portal.
 
-## Responsibilities
-- Own the configurable iCore connection.
-- Authenticate against iCore.
-- Keep the original iCore token server-side in an HttpOnly cookie.
-- Validate the iCore token with a short TTL cache.
-- Convert iCore payloads into stable portal semantics.
-- Expose semantic portal services to the React frontend.
-- Keep iCore endpoint URLs and mapping rules out of the frontend.
+## Authentication source of truth
 
-## Architecture
+Authentication behavior in this repository follows **AUTHENTICATION.md only**.
 
-```
-React frontend
-  |
-  | /auth/* + /api/v1/* (HttpOnly session cookie)
-  v
-Service Portal Proxy (FastAPI)
-  |
-  | semantic mapping + iCore Bearer token
-  v
-iCore /api/v2/icore
+- FastAPI does not create its own JWT.
+- `POST /auth/login` authenticates against iCore and returns the original iCore access token.
+- Protected endpoints require `Authorization: Bearer <iCore token>`.
+- The token is validated against iCore `GET /auth/userinfo`.
+- Successful token validation is cached for 300 seconds.
+- Logout invalidates the local validation cache.
+
+## Mandatory iCore connection
+
+For the current development environment both the iCore base URL and login Origin are mandatory:
+
+```env
+ICORE_BASE_URL=https://c03-insinno-internal-dev.insinno.de/
+ICORE_API_PATH=/api/v2/icore
+ICORE_LOGIN_ORIGIN=https://c03-insinno-internal-dev.insinno.de/
 ```
 
-No second JWT is minted. The token remains the token issued by iCore, but JavaScript does not receive or store it.
+The login client always sends:
 
-## Configuration
+```http
+Origin: https://c03-insinno-internal-dev.insinno.de/
+Content-Type: application/x-www-form-urlencoded
+```
 
-Copy `.env.example` to `.env`.
+The effective iCore API base is:
 
-Important settings:
-- `ICORE_BASE_URL`: environment-specific iCore host.
-- `ICORE_API_PATH`: normally `/api/v2/icore`.
-- `ICORE_LOGIN_ORIGIN`: required Origin header for iCore login.
-- `ICORE_USERINFO_PATH`: configurable because deployed iCore versions may use `/loggedUser` or `/auth/userinfo`.
-- `AUTH_COOKIE_SECURE=true` in production.
-- `CORS_ORIGINS`: frontend origins allowed to send credentials.
+`https://c03-insinno-internal-dev.insinno.de/api/v2/icore`
 
-## Semantic configuration
+## Semantic proxy
 
-`config/semantics.json` is the semantic adapter configuration. It defines resource source paths, collection paths, field mappings, and UI object schemas.
-
-Changing iCore field/path mappings therefore does not require changes in React components.
+`config/semantics.json` defines the mapping from iCore resources to stable portal semantics. The React frontend only calls the proxy and therefore does not contain iCore endpoint paths or semantic mappings.
 
 ## Run
 
