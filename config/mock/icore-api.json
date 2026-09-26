@@ -1,0 +1,573 @@
+{
+  "metadata": {
+    "dataset": "pfefferminzia-sales-tool-demo",
+    "description": "iCore-shaped mock responses for the Service Portal test setup.",
+    "generatedFor": "insinno-service-portal-proxy",
+    "locale": "de-DE"
+  },
+  "partners": [
+    {
+      "id": 501,
+      "externalId": "PFEFFERMINZIA",
+      "company": "Pfefferminzia Medien GmbH",
+      "firstname": "Anna",
+      "lastname": "Becker",
+      "email": "anna.becker@pfefferminzia.example",
+      "phone": "+49 40 55501020",
+      "deactivated": false
+    },
+    {
+      "id": 900,
+      "externalId": "INSINNO",
+      "company": "insinno GmbH",
+      "firstname": "Michael",
+      "lastname": "Schneider",
+      "email": "michael.schneider@insinno.example",
+      "phone": "+49 731 5550110",
+      "deactivated": false
+    }
+  ],
+  "apps": [
+    {
+      "id": 2101,
+      "externalId": "APP-MAKLER-VERTRIEBSTOOLS",
+      "clientId": 501,
+      "name": "Makler-Vetriebstools",
+      "displayName": "Makler-Vetriebstools",
+      "deactivated": false,
+      "configJsonSchema": {
+        "type": "object",
+        "properties": {
+          "environments": {
+            "type": "object"
+          },
+          "repository": {
+            "type": "object"
+          },
+          "support": {
+            "type": "object"
+          }
+        }
+      },
+      "configJsonValue": {
+        "useCaseContractId": 1001,
+        "applicationRole": "SALES_FRONTEND",
+        "environments": {
+          "DEV": {
+            "url": "https://dev-makler-vertriebstools.pfefferminzia.example",
+            "apiUrl": "https://api-dev-makler-vertriebstools.pfefferminzia.example",
+            "status": "RUNNING"
+          },
+          "STG": {
+            "url": "https://stg-makler-vertriebstools.pfefferminzia.example",
+            "apiUrl": "https://api-stg-makler-vertriebstools.pfefferminzia.example",
+            "status": "RUNNING"
+          },
+          "PRD": {
+            "url": "https://makler-vertriebstools.pfefferminzia.example",
+            "apiUrl": "https://api-makler-vertriebstools.pfefferminzia.example",
+            "status": "RUNNING"
+          }
+        },
+        "repository": {
+          "url": "https://github.com/chjmichel/pfefferminzia-sales-tool",
+          "defaultBranch": "main",
+          "developmentBranch": "development"
+        },
+        "support": {
+          "serviceOwner": "Michael Schneider",
+          "businessOwner": "Anna Becker",
+          "documentationUrl": "https://docs.pfefferminzia.example/makler-vertriebstools"
+        }
+      },
+      "integrations": [
+        {
+          "id": 3101,
+          "name": "iCore API",
+          "typeName": "REST",
+          "baseUrl": "https://c03-insinno-internal-dev.insinno.de/api/v2/icore",
+          "enable": true,
+          "externalId": "INT-ICORE"
+        }
+      ]
+    }
+  ],
+  "contracts": [
+    {
+      "id": 1001,
+      "externalId": "UC-PFEFFERMINZIA-SALES-TOOL",
+      "name": "Pfefferminzia-Sales-tool",
+      "status": "ACTIVE",
+      "startDate": "2026-01-01",
+      "endDate": null,
+      "deactivated": false,
+      "owner": {
+        "id": 501,
+        "company": "Pfefferminzia Medien GmbH",
+        "firstname": "Anna",
+        "lastname": "Becker",
+        "email": "anna.becker@pfefferminzia.example"
+      },
+      "product": {
+        "id": 1101,
+        "externalId": "PRODUCT-USECASE-PFEFFERMINZIA-SALES",
+        "name": "Pfefferminzia-Sales-tool",
+        "displayName": "Pfefferminzia Sales Tool",
+        "description": "Digital sales workspace for brokers, providing customer, opportunity and product-oriented sales support.",
+        "producttype": {
+          "id": 1,
+          "name": "USE_CASE",
+          "displayName": "Use Case"
+        },
+        "productstatus": {
+          "id": 1,
+          "name": "ACTIVE",
+          "displayName": "Active"
+        }
+      },
+      "objectitem": {
+        "id": 1201,
+        "name": "Sales Tool Use Case",
+        "objectType": "USE_CASE",
+        "shortname": "USE_CASE"
+      },
+      "contractDetails": [
+        {
+          "attributeName": "businessOwner",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "operationLead",
+          "value": "Michael Schneider",
+          "valueLabel": "Michael Schneider"
+        },
+        {
+          "attributeName": "serviceStatus",
+          "value": "RUNNING",
+          "valueLabel": "Running"
+        },
+        {
+          "attributeName": "relatedAppIds",
+          "value": "2101",
+          "valueLabel": "Makler-Vetriebstools"
+        },
+        {
+          "attributeName": "summary",
+          "value": "Reengineering and continuous operation of the Pfefferminzia broker sales solution.",
+          "valueLabel": "Reengineering and continuous operation of the Pfefferminzia broker sales solution."
+        }
+      ],
+      "serviceContracts": []
+    },
+    {
+      "id": 1002,
+      "externalId": "PRJ-PFEFFERMINZIA-REENGINEERING",
+      "name": "Pfefferminzia Sales Tool Reengineering",
+      "status": "IN_DEVELOPMENT",
+      "startDate": "2026-08-03",
+      "endDate": "2026-12-18",
+      "duration": 138,
+      "deactivated": false,
+      "parentcontract": {
+        "id": 1001,
+        "externalId": "UC-PFEFFERMINZIA-SALES-TOOL",
+        "name": "Pfefferminzia-Sales-tool"
+      },
+      "owner": {
+        "id": 900,
+        "company": "insinno GmbH",
+        "firstname": "Michael",
+        "lastname": "Schneider",
+        "email": "michael.schneider@insinno.example"
+      },
+      "product": {
+        "id": 1102,
+        "externalId": "PRODUCT-PROJECT-REENGINEERING",
+        "name": "reengineering",
+        "displayName": "Reengineering",
+        "description": "Structured reengineering of the existing broker sales tool with modernization of architecture, UX and automated quality assurance.",
+        "producttype": {
+          "id": 2,
+          "name": "PROJECT",
+          "displayName": "Project"
+        },
+        "productstatus": {
+          "id": 1,
+          "name": "ACTIVE",
+          "displayName": "Active"
+        }
+      },
+      "objectitem": {
+        "id": 1202,
+        "name": "Reengineering Project",
+        "objectType": "PROJECT",
+        "shortname": "PROJECT"
+      },
+      "contractDetails": [
+        {
+          "attributeName": "projectType",
+          "value": "REENGINEERING",
+          "valueLabel": "Reengineering"
+        },
+        {
+          "attributeName": "projectManager",
+          "value": "Michael Schneider",
+          "valueLabel": "Michael Schneider"
+        },
+        {
+          "attributeName": "customerContact",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "technicalLead",
+          "value": "Laura König",
+          "valueLabel": "Laura König"
+        },
+        {
+          "attributeName": "progress",
+          "value": "42",
+          "valueLabel": "42 %"
+        },
+        {
+          "attributeName": "phase",
+          "value": "IMPLEMENTATION",
+          "valueLabel": "Implementation"
+        },
+        {
+          "attributeName": "plannedStart",
+          "value": "2026-08-03",
+          "valueLabel": "03.08.2026"
+        },
+        {
+          "attributeName": "plannedEnd",
+          "value": "2026-12-18",
+          "valueLabel": "18.12.2026"
+        },
+        {
+          "attributeName": "repositoryUrl",
+          "value": "https://github.com/chjmichel/pfefferminzia-sales-tool",
+          "valueLabel": "GitHub repository"
+        },
+        {
+          "attributeName": "branch",
+          "value": "development",
+          "valueLabel": "development"
+        },
+        {
+          "attributeName": "testAutomationFramework",
+          "value": "Playwright",
+          "valueLabel": "Playwright"
+        },
+        {
+          "attributeName": "ciPipeline",
+          "value": "GitHub Actions",
+          "valueLabel": "GitHub Actions"
+        }
+      ],
+      "contractDocuments": [
+        {
+          "id": 4101,
+          "externalId": "DOC-TEST-AUTOMATION-PLAN",
+          "name": "Test Automation Plan",
+          "documentType": "TEST_AUTOMATION",
+          "fileName": "test-automation-plan.md",
+          "url": "https://github.com/chjmichel/pfefferminzia-sales-tool/blob/development/docs/test-automation-plan.md",
+          "description": "Scope, test pyramid, browser matrix, fixtures and quality gates for automated tests."
+        },
+        {
+          "id": 4102,
+          "externalId": "DOC-PLAYWRIGHT-SCRIPTS",
+          "name": "Playwright Test Scripts",
+          "documentType": "TEST_AUTOMATION_SCRIPTS",
+          "fileName": "tests/e2e",
+          "url": "https://github.com/chjmichel/pfefferminzia-sales-tool/tree/development/tests/e2e",
+          "description": "Automated end-to-end tests for broker sales journeys and regression scenarios."
+        },
+        {
+          "id": 4103,
+          "externalId": "DOC-REENGINEERING-ARCH",
+          "name": "Reengineering Architecture",
+          "documentType": "ARCHITECTURE",
+          "fileName": "reengineering-architecture.md",
+          "url": "https://github.com/chjmichel/pfefferminzia-sales-tool/blob/development/docs/reengineering-architecture.md",
+          "description": "Target architecture, migration boundaries and integration design."
+        }
+      ],
+      "serviceContracts": [
+        {
+          "id": 2001,
+          "externalId": "EPIC-SOLUTION-DESIGN"
+        },
+        {
+          "id": 2002,
+          "externalId": "EPIC-FRONTEND-REENGINEERING"
+        },
+        {
+          "id": 2003,
+          "externalId": "EPIC-ICORE-INTEGRATION"
+        },
+        {
+          "id": 2051,
+          "externalId": "MS-SOLUTION-DESIGN"
+        },
+        {
+          "id": 2052,
+          "externalId": "MS-UAT"
+        },
+        {
+          "id": 2053,
+          "externalId": "MS-GOLIVE"
+        }
+      ]
+    }
+  ],
+  "servicecontracts": [
+    {
+      "id": 2001,
+      "externalId": "EPIC-SOLUTION-DESIGN",
+      "contract": {
+        "id": 1002
+      },
+      "name": "Solution Design",
+      "objectitem": {
+        "id": 1301,
+        "name": "Project Epic",
+        "objectType": "EPIC"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "status",
+          "value": "DONE",
+          "valueLabel": "Done"
+        },
+        {
+          "attributeName": "progress",
+          "value": "100",
+          "valueLabel": "100 %"
+        },
+        {
+          "attributeName": "owner",
+          "value": "Laura König",
+          "valueLabel": "Laura König"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-08-03",
+          "valueLabel": "03.08.2026"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-08-28",
+          "valueLabel": "28.08.2026"
+        }
+      ]
+    },
+    {
+      "id": 2002,
+      "externalId": "EPIC-FRONTEND-REENGINEERING",
+      "contract": {
+        "id": 1002
+      },
+      "name": "Frontend Reengineering",
+      "objectitem": {
+        "id": 1301,
+        "name": "Project Epic",
+        "objectType": "EPIC"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "status",
+          "value": "IN_DEVELOPMENT",
+          "valueLabel": "In development"
+        },
+        {
+          "attributeName": "progress",
+          "value": "55",
+          "valueLabel": "55 %"
+        },
+        {
+          "attributeName": "owner",
+          "value": "Development Team",
+          "valueLabel": "Development Team"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-08-31",
+          "valueLabel": "31.08.2026"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-10-30",
+          "valueLabel": "30.10.2026"
+        }
+      ]
+    },
+    {
+      "id": 2003,
+      "externalId": "EPIC-ICORE-INTEGRATION",
+      "contract": {
+        "id": 1002
+      },
+      "name": "iCore Integration",
+      "objectitem": {
+        "id": 1301,
+        "name": "Project Epic",
+        "objectType": "EPIC"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "status",
+          "value": "PLANNED",
+          "valueLabel": "Planned"
+        },
+        {
+          "attributeName": "progress",
+          "value": "15",
+          "valueLabel": "15 %"
+        },
+        {
+          "attributeName": "owner",
+          "value": "Integration Team",
+          "valueLabel": "Integration Team"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-10-05",
+          "valueLabel": "05.10.2026"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-11-20",
+          "valueLabel": "20.11.2026"
+        }
+      ]
+    },
+    {
+      "id": 2051,
+      "externalId": "MS-SOLUTION-DESIGN",
+      "contract": {
+        "id": 1002
+      },
+      "name": "Solution Design approved",
+      "objectitem": {
+        "id": 1302,
+        "name": "Project Milestone",
+        "objectType": "MILESTONE"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "plannedDate",
+          "value": "2026-08-28",
+          "valueLabel": "28.08.2026"
+        },
+        {
+          "attributeName": "status",
+          "value": "DONE",
+          "valueLabel": "Done"
+        }
+      ]
+    },
+    {
+      "id": 2052,
+      "externalId": "MS-UAT",
+      "contract": {
+        "id": 1002
+      },
+      "name": "User Acceptance Test",
+      "objectitem": {
+        "id": 1302,
+        "name": "Project Milestone",
+        "objectType": "MILESTONE"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "plannedDate",
+          "value": "2026-12-04",
+          "valueLabel": "04.12.2026"
+        },
+        {
+          "attributeName": "status",
+          "value": "PLANNED",
+          "valueLabel": "Planned"
+        }
+      ]
+    },
+    {
+      "id": 2053,
+      "externalId": "MS-GOLIVE",
+      "contract": {
+        "id": 1002
+      },
+      "name": "Production Go-Live",
+      "objectitem": {
+        "id": 1302,
+        "name": "Project Milestone",
+        "objectType": "MILESTONE"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "plannedDate",
+          "value": "2026-12-18",
+          "valueLabel": "18.12.2026"
+        },
+        {
+          "attributeName": "status",
+          "value": "PLANNED",
+          "valueLabel": "Planned"
+        }
+      ]
+    },
+    {
+      "id": 2201,
+      "externalId": "KPI-PROJECT-PROGRESS",
+      "contract": {
+        "id": 1002
+      },
+      "name": "Project progress",
+      "objectitem": {
+        "id": 1304,
+        "name": "KPI Definition",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "value",
+          "value": "42",
+          "valueLabel": "42 %"
+        },
+        {
+          "attributeName": "unit",
+          "value": "PERCENT",
+          "valueLabel": "%"
+        }
+      ]
+    },
+    {
+      "id": 2202,
+      "externalId": "KPI-AUTOMATED-TESTS",
+      "contract": {
+        "id": 1002
+      },
+      "name": "Automated regression tests",
+      "objectitem": {
+        "id": 1304,
+        "name": "KPI Definition",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "value",
+          "value": "186",
+          "valueLabel": "186"
+        },
+        {
+          "attributeName": "unit",
+          "value": "COUNT",
+          "valueLabel": "Tests"
+        }
+      ]
+    }
+  ]
+}
