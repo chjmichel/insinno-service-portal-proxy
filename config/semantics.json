@@ -1,0 +1,196 @@
+{
+  "version": "1.0.0",
+  "description": "Semantic mapping for the insinno Service Portal. Stable portal concepts are derived from generic iCore entities by semantic type discriminators.",
+  "discriminators": {
+    "productType": "product.producttype.name",
+    "serviceObjectType": "objectitem.objectType"
+  },
+  "resources": {
+    "useCases": {
+      "source": {
+        "entity": "ContractDTO",
+        "endpoint": "/contracts",
+        "method": "GET",
+        "mockKey": "contracts"
+      },
+      "filters": {
+        "product.producttype.name": "USE_CASE"
+      },
+      "semanticType": "USE_CASE"
+    },
+    "apps": {
+      "source": {
+        "entity": "AppDTO",
+        "endpoint": "/apps",
+        "method": "GET",
+        "mockKey": "apps"
+      },
+      "filters": {},
+      "semanticType": "APP"
+    },
+    "projects": {
+      "source": {
+        "entity": "ContractDTO",
+        "endpoint": "/contracts",
+        "method": "GET",
+        "mockKey": "contracts"
+      },
+      "filters": {
+        "product.producttype.name": "PROJECT"
+      },
+      "semanticType": "PROJECT"
+    },
+    "epics": {
+      "source": {
+        "entity": "ServiceContractDTO",
+        "endpoint": "/servicecontracts",
+        "method": "GET",
+        "mockKey": "servicecontracts"
+      },
+      "filters": {
+        "objectitem.objectType": "EPIC"
+      },
+      "semanticType": "EPIC"
+    },
+    "milestones": {
+      "source": {
+        "entity": "ServiceContractDTO",
+        "endpoint": "/servicecontracts",
+        "method": "GET",
+        "mockKey": "servicecontracts"
+      },
+      "filters": {
+        "objectitem.objectType": "MILESTONE"
+      },
+      "semanticType": "MILESTONE"
+    },
+    "tasks": {
+      "source": {
+        "entity": "ServiceContractDTO",
+        "endpoint": "/servicecontracts",
+        "method": "GET",
+        "mockKey": "servicecontracts"
+      },
+      "filters": {
+        "objectitem.objectType": "TASK"
+      },
+      "semanticType": "TASK"
+    },
+    "kpis": {
+      "source": {
+        "entity": "ServiceContractDTO",
+        "endpoint": "/servicecontracts",
+        "method": "GET",
+        "mockKey": "servicecontracts"
+      },
+      "filters": {
+        "objectitem.objectType": "KPI_DEFINITION"
+      },
+      "semanticType": "KPI_DEFINITION"
+    }
+  },
+  "types": {
+    "productTypes": {
+      "USE_CASE": {
+        "labels": {
+          "en": "Use case",
+          "de": "Use Case",
+          "fr": "Cas d’usage",
+          "es": "Caso de uso"
+        }
+      },
+      "PROJECT": {
+        "labels": {
+          "en": "Project",
+          "de": "Projekt",
+          "fr": "Projet",
+          "es": "Proyecto"
+        }
+      },
+      "CHANGE": {
+        "labels": {
+          "en": "Change",
+          "de": "Änderung",
+          "fr": "Changement",
+          "es": "Cambio"
+        }
+      },
+      "SERVICE_PACKAGE": {
+        "labels": {
+          "en": "Service package",
+          "de": "Servicepaket",
+          "fr": "Pack de services",
+          "es": "Paquete de servicios"
+        }
+      }
+    },
+    "projectTypes": {
+      "REENGINEERING": {
+        "labels": {
+          "en": "Reengineering",
+          "de": "Reengineering",
+          "fr": "Réingénierie",
+          "es": "Reingeniería"
+        }
+      },
+      "INITIAL_PROJECT": {
+        "labels": {
+          "en": "Initial project",
+          "de": "Initialprojekt",
+          "fr": "Projet initial",
+          "es": "Proyecto inicial"
+        }
+      },
+      "SOLUTION_DESIGN": {
+        "labels": {
+          "en": "Solution design",
+          "de": "Solution Design",
+          "fr": "Conception de solution",
+          "es": "Diseño de solución"
+        }
+      }
+    },
+    "serviceObjectTypes": {
+      "EPIC": {
+        "labels": {
+          "en": "Epic",
+          "de": "Epic",
+          "fr": "Epic",
+          "es": "Epic"
+        }
+      },
+      "TASK": {
+        "labels": {
+          "en": "Task",
+          "de": "Aufgabe",
+          "fr": "Tâche",
+          "es": "Tarea"
+        }
+      },
+      "MILESTONE": {
+        "labels": {
+          "en": "Milestone",
+          "de": "Meilenstein",
+          "fr": "Jalon",
+          "es": "Hito"
+        }
+      },
+      "DELIVERABLE": {
+        "labels": {
+          "en": "Deliverable",
+          "de": "Liefergegenstand",
+          "fr": "Livrable",
+          "es": "Entregable"
+        }
+      },
+      "KPI_DEFINITION": {
+        "labels": {
+          "en": "KPI",
+          "de": "KPI",
+          "fr": "KPI",
+          "es": "KPI"
+        }
+      }
+    }
+  }
+}
