@@ -27,6 +27,14 @@ async def require_user(
         raise HTTPException(status_code=401, detail="Bearer token required")
 
     token = credentials.credentials
+
+    # Full local mock authentication: keep auth enabled, but validate the
+    # development token locally instead of calling iCore /auth/userinfo.
+    if settings.use_mock_data:
+        if token != settings.mock_access_token:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        return {**settings.mock_user, "_token": token}
+
     now = time.monotonic()
     cached = _token_cache.get(token)
     if cached and cached[0] > now:
