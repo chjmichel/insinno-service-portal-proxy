@@ -17,15 +17,13 @@ class Settings(BaseSettings):
     use_mock_data: bool = False
     mock_data_path: str = "config/mock/icore-api.json"
 
-    # Explicit development-only credentials for the complete mocked auth flow.
-    mock_username: str = "demo@pfefferminzia.example"
-    mock_password: str = "demo"
+    # Mock mode uses a fixed local token. Credentials are intentionally not validated.
     mock_access_token: str = "mock-service-portal-token"
     mock_token_expires_in: int = 86400
 
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
-    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False, extra="ignore")
 
     @property
     def icore_api_url(self) -> str:
@@ -38,11 +36,11 @@ class Settings(BaseSettings):
     @property
     def mock_user(self) -> dict[str, str]:
         return {
-            "username": self.mock_username,
-            "email": self.mock_username,
-            "firstname": "Demo",
+            "username": "mock-user",
+            "email": "mock-user@local",
+            "firstname": "Mock",
             "lastname": "User",
-            "displayName": "Pfefferminzia Demo User",
+            "displayName": "Mock User",
         }
 
 
