@@ -28,8 +28,8 @@ async def require_user(
 
     token = credentials.credentials
 
-    # Full local mock authentication: keep auth enabled, but validate the
-    # development token locally instead of calling iCore /auth/userinfo.
+    # Mock mode validates only that the frontend uses the configured mock token.
+    # There is no user/password validation and no call to iCore /auth/userinfo.
     if settings.use_mock_data:
         if token != settings.mock_access_token:
             raise HTTPException(status_code=401, detail="Unauthorized")
