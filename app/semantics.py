@@ -8,8 +8,9 @@ from .icore_client import ICoreClient
 class SemanticService:
     """Maps generic iCore resources to stable portal semantics.
 
-    In mock mode the same semantic filtering is applied to iCore-shaped JSON
-    fixtures, so frontend behavior stays identical when switching to live iCore.
+    In mock mode the same semantic filtering and normalization is applied to
+    iCore-shaped JSON fixtures, so frontend behavior stays identical when
+    switching to live iCore.
     """
 
     def __init__(
@@ -43,11 +44,115 @@ class SemanticService:
         if not isinstance(payload, list):
             return []
 
-        return [
+        filtered = [
             item
             for item in payload
             if self._matches_filters(item, resource.get("filters", {}))
         ]
+        return [self._normalize(resource_name, item) for item in filtered]
+
+    @classmethod
+    def _normalize(cls, resource_name: str, item: dict[str, Any]) -> dict[str, Any]:
+        if resource_name == "useCases":
+            details = cls._detail_map(item.get("contractDetails", []))
+            product = item.get("product") or {}
+            owner = item.get("owner") or {}
+            return {
+                "id": str(item.get("id", "")),
+                "customerId": str(owner.get("id", "")) if owner.get("id") is not None else None,
+                "name": item.get("name") or product.get("displayName") or product.get("name") or "",
+                "type": (product.get("producttype") or {}).get("name") or "USE_CASE",
+                "category": product.get("displayName") or "Service",
+                "description": product.get("description") or details.get("summary") or "",
+                "status": details.get("serviceStatus") or cls._service_status(item.get("status")),
+                "currentProject": details.get("currentProject"),
+                "customerAction": details.get("customerAction"),
+            }
+
+        if resource_name == "projects":
+            details = cls._detail_map(item.get("contractDetails", []))
+            parent = item.get("parentcontract") or {}
+            owner = item.get("owner") or {}
+            responsible = " ".join(
+                part for part in [owner.get("firstname"), owner.get("lastname")] if part
+            ) or owner.get("company")
+            return {
+                "id": str(item.get("id", "")),
+                "useCaseId": str(parent.get("id", "")),
+                "name": item.get("name") or "",
+                "status": item.get("status") or "PLANNED",
+                "progress": cls._number(details.get("progress"), 0),
+                "startDate": item.get("startDate") or details.get("plannedStart") or "",
+                "targetDate": item.get("endDate") or details.get("plannedEnd") or "",
+                "responsible": responsible,
+                "projectManager": details.get("projectManager"),
+                "developmentTeam": details.get("developmentTeam") or details.get("technicalLead"),
+            }
+
+        if resource_name == "epics":
+            details = cls._detail_map(item.get("serviceDetails", []))
+            contract = item.get("contract") or {}
+            return {
+                "id": str(item.get("id", "")),
+                "projectId": str(contract.get("id", "")),
+                "name": item.get("name") or "",
+                "status": details.get("status") or "PLANNED",
+                "progress": cls._number(details.get("progress"), 0),
+                "targetDate": details.get("endDate") or details.get("plannedDate") or "",
+            }
+
+        if resource_name == "milestones":
+            details = cls._detail_map(item.get("serviceDetails", []))
+            contract = item.get("contract") or {}
+            return {
+                "id": str(item.get("id", "")),
+                "projectId": str(contract.get("id", "")),
+                "name": item.get("name") or "",
+                "status": details.get("status") or "PLANNED",
+                "targetDate": details.get("plannedDate") or "",
+            }
+
+        if resource_name == "kpis":
+            details = cls._detail_map(item.get("serviceDetails", []))
+            contract = item.get("contract") or {}
+            value = details.get("value")
+            unit = details.get("unit")
+            display_value = f"{value} %" if unit == "PERCENT" and value not in (None, "") else str(value or "")
+            return {
+                "id": str(item.get("id", "")),
+                "projectId": str(contract.get("id", "")),
+                "useCaseId": "",
+                "name": item.get("name") or "",
+                "value": display_value,
+                "target": details.get("target"),
+                "delta": cls._number(details.get("delta"), 0) if details.get("delta") is not None else None,
+                "health": details.get("health") or "neutral",
+            }
+
+        return item
+
+    @staticmethod
+    def _detail_map(details: list[dict[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for detail in details:
+            key = detail.get("attributeName")
+            if key:
+                result[key] = detail.get("value")
+        return result
+
+    @staticmethod
+    def _number(value: Any, default: float | int = 0) -> float | int:
+        try:
+            number = float(value)
+            return int(number) if number.is_integer() else number
+        except (TypeError, ValueError):
+            return default
+
+    @staticmethod
+    def _service_status(value: Any) -> str:
+        if value in {"RUNNING", "PARTLY_RUNNING", "OFFLINE", "MAINTENANCE"}:
+            return str(value)
+        return "RUNNING" if value == "ACTIVE" else "OFFLINE"
 
     @staticmethod
     def _load_json(path: str) -> dict[str, Any]:
