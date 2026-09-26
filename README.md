@@ -13,7 +13,7 @@ Authentication behavior in this repository follows **AUTHENTICATION.md only** fo
 - Successful token validation is cached for 300 seconds.
 - Logout invalidates the local validation cache.
 
-When `USE_MOCK_DATA=true`, the proxy provides a complete local authentication flow with development-only mock credentials instead of calling iCore.
+When `USE_MOCK_DATA=true`, the proxy skips credential validation completely. `POST /auth/login` immediately returns a local mock token and mock user without calling iCore.
 
 ## Mandatory iCore connection
 
@@ -62,37 +62,18 @@ REQUIRE_AUTHENTICATION=true
 MOCK_DATA_PATH=config/mock/icore-api.json
 ```
 
-Default development-only credentials:
+In mock mode, `POST /auth/login` ignores the submitted username and password and immediately returns the configured mock Bearer token and a local mock user.
 
-```text
-Username: demo@pfefferminzia.example
-Password: demo
-```
+The returned token is accepted by `/auth/me`, semantic resources and `/api/v1/portal/bootstrap` while `USE_MOCK_DATA=true`. No iCore authentication request is made in mock mode.
 
-The mock login endpoint behaves like the live frontend contract:
-
-```http
-POST /auth/login
-Content-Type: application/json
-
-{
-  "username": "demo@pfefferminzia.example",
-  "password": "demo"
-}
-```
-
-It returns the configured mock Bearer token and a mock user. The same token is accepted by `/auth/me`, semantic resources and `/api/v1/portal/bootstrap` while `USE_MOCK_DATA=true`. No iCore authentication request is made in mock mode.
-
-The mock credentials and token can be overridden with:
+The mock token can be configured with:
 
 ```env
-MOCK_USERNAME=demo@pfefferminzia.example
-MOCK_PASSWORD=demo
 MOCK_ACCESS_TOKEN=mock-service-portal-token
 MOCK_TOKEN_EXPIRES_IN=86400
 ```
 
-For an authentication-free local setup, `REQUIRE_AUTHENTICATION=false` remains available, but the authenticated mock flow above is preferred because it exercises the frontend login and Bearer-token handling.
+For an authentication-free local setup, `REQUIRE_AUTHENTICATION=false` remains available. With `REQUIRE_AUTHENTICATION=true`, mock mode still exercises frontend token handling while skipping credential validation.
 
 The current mock dataset contains:
 
