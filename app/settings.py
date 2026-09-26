@@ -13,6 +13,11 @@ class Settings(BaseSettings):
     require_authentication: bool = True
     token_cache_seconds: int = 300
 
+    auth_cookie_name: str = "service_portal_icore"
+    auth_cookie_secure: bool = True
+    auth_cookie_samesite: str = "lax"
+    auth_cookie_max_age: int = 3600
+
     semantics_config_path: str = "config/semantics.json"
     cors_origins: str = "http://localhost:5173"
 
