@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     token_cache_seconds: int = 300
 
     semantics_config_path: str = "config/semantics.json"
+    use_mock_data: bool = False
+    mock_data_path: str = "config/mock/icore-api.json"
+
     cors_origins: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
