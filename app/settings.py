@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     icore_base_url: str
     icore_api_path: str = "/api/v2/icore"
     icore_login_origin: str
+    icore_userinfo_path: str = "/loggedUser"
     icore_timeout_seconds: float = 30.0
     icore_verify_ssl: bool = True
 

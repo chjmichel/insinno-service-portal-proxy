@@ -45,7 +45,7 @@ class ICoreClient:
     async def get_current_user(self, token: str) -> dict[str, Any]:
         response = await self._request(
             "GET",
-            "/loggedUser",
+            self.settings.icore_userinfo_path,
             headers=self._bearer(token),
             include_api_path=True,
         )
