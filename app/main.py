@@ -7,7 +7,7 @@ from .models import LoginRequest, LoginResponse, SemanticBootstrap
 from .semantics import SemanticService
 from .settings import Settings, get_settings
 
-app = FastAPI(title="insinno Service Portal Proxy", version="0.5.0")
+app = FastAPI(title="insinno Service Portal Proxy", version="0.6.0")
 
 settings = get_settings()
 app.add_middleware(
@@ -45,13 +45,9 @@ async def login(
     settings: Settings = Depends(get_settings),
     client: ICoreClient = Depends(get_icore_client),
 ) -> LoginResponse:
+    # In mock mode the frontend receives a token immediately.
+    # Username/password are deliberately ignored and no external iCore call is made.
     if settings.use_mock_data:
-        if (
-            request.username != settings.mock_username
-            or request.password != settings.mock_password
-        ):
-            raise HTTPException(status_code=401, detail="Invalid mock credentials")
-
         return LoginResponse(
             access_token=settings.mock_access_token,
             expires_in=settings.mock_token_expires_in,
