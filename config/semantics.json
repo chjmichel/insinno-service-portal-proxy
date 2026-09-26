@@ -192,5 +192,154 @@
         }
       }
     }
-  }
+  },
+  "objectSchemas": [
+    {
+      "objectType": "USE_CASE",
+      "label": "Use Case",
+      "description": "Customer-facing business service delivered on iCore.",
+      "attributes": [
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "category",
+          "label": "Category",
+          "type": "string"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "key": "status",
+          "label": "Service Status",
+          "type": "status",
+          "options": [
+            "RUNNING",
+            "PARTLY_RUNNING",
+            "OFFLINE",
+            "MAINTENANCE"
+          ]
+        },
+        {
+          "key": "customerAction",
+          "label": "Customer Action",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "objectType": "PROJECT",
+      "label": "Project",
+      "attributes": [
+        {
+          "key": "name",
+          "label": "Project",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "status",
+          "label": "Status",
+          "type": "status",
+          "options": [
+            "PLANNED",
+            "CONCEPTED",
+            "IN_DEVELOPMENT",
+            "TEST",
+            "ACCEPTED",
+            "DONE"
+          ]
+        },
+        {
+          "key": "progress",
+          "label": "Progress",
+          "type": "percentage"
+        },
+        {
+          "key": "startDate",
+          "label": "Start",
+          "type": "date"
+        },
+        {
+          "key": "targetDate",
+          "label": "Target",
+          "type": "date"
+        },
+        {
+          "key": "responsible",
+          "label": "Responsible",
+          "type": "person"
+        },
+        {
+          "key": "projectManager",
+          "label": "Project Manager",
+          "type": "person"
+        },
+        {
+          "key": "developmentTeam",
+          "label": "Development Team",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "objectType": "EPIC",
+      "label": "Epic",
+      "attributes": [
+        {
+          "key": "name",
+          "label": "Epic",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "status",
+          "label": "Status",
+          "type": "status"
+        },
+        {
+          "key": "progress",
+          "label": "Progress",
+          "type": "percentage"
+        },
+        {
+          "key": "targetDate",
+          "label": "Target",
+          "type": "date"
+        }
+      ]
+    },
+    {
+      "objectType": "KPI",
+      "label": "KPI",
+      "attributes": [
+        {
+          "key": "name",
+          "label": "KPI",
+          "type": "string"
+        },
+        {
+          "key": "value",
+          "label": "Value",
+          "type": "string"
+        },
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "string"
+        },
+        {
+          "key": "delta",
+          "label": "Trend",
+          "type": "number"
+        }
+      ]
+    }
+  ]
 }
