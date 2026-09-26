@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     mock_access_token: str = "mock-service-portal-token"
     mock_token_expires_in: int = 86400
 
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"\n    cors_origin_regex: str = r"^http://(localhost|127\\.0\\.0\\.1)(:\\d+)?$"
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False, extra="ignore")
 
