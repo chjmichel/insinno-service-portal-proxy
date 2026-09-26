@@ -47,3 +47,38 @@ uvicorn app.main:app --reload --port 8000
 ```
 
 Swagger UI: `http://localhost:8000/docs`
+
+
+## Mock iCore data
+
+For frontend and integration testing the proxy can serve iCore-shaped mock data through the same semantic API used for live iCore.
+
+Enable it in `.env`:
+
+```env
+USE_MOCK_DATA=true
+MOCK_DATA_PATH=config/mock/icore-api.json
+# Optional for a fully local frontend test without iCore token validation:
+REQUIRE_AUTHENTICATION=false
+```
+
+The current mock dataset contains:
+
+- Use case: `Pfefferminzia-Sales-tool`
+- App: `Makler-Vetriebstools` with DEV/STG/PRD configuration
+- Reengineering project with timeline, customer/insinno contacts, repository/branch and test-automation documents
+- Project epics, milestones and KPI definitions represented as `ServiceContractDTO`-shaped records
+
+Resources can be queried through:
+
+```text
+GET /api/v1/resources/useCases
+GET /api/v1/resources/apps
+GET /api/v1/resources/projects
+GET /api/v1/resources/epics
+GET /api/v1/resources/milestones
+GET /api/v1/resources/kpis
+GET /api/v1/portal/bootstrap
+```
+
+The mock file intentionally follows iCore DTO shapes. Semantic differentiation is configured in `config/semantics.json` via `product.producttype.name` and `objectitem.objectType`.
