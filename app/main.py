@@ -7,7 +7,7 @@ from .models import LoginRequest, LoginResponse, SemanticBootstrap
 from .semantics import SemanticService
 from .settings import Settings, get_settings
 
-app = FastAPI(title="insinno Service Portal Proxy", version="0.6.1")
+app = FastAPI(title="insinno Service Portal Proxy", version="0.6.2")
 
 settings = get_settings()
 app.add_middleware(
@@ -122,6 +122,17 @@ async def bootstrap(
         projects = await service.load_resource("projects", token)
         epics = await service.load_resource("epics", token)
         kpis = await service.load_resource("kpis", token)
+
+        # KPI records are attached to projects in iCore. Resolve them back to
+        # their parent use case for the frontend's operational KPI views.
+        project_to_use_case = {
+            project.get("id"): project.get("useCaseId")
+            for project in projects
+            if project.get("id") and project.get("useCaseId")
+        }
+        for kpi in kpis:
+            if not kpi.get("useCaseId") and kpi.get("projectId"):
+                kpi["useCaseId"] = project_to_use_case.get(kpi["projectId"], "")
     except ICoreError as exc:
         raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
 
