@@ -66,6 +66,22 @@ class WorkInput(BaseModel):
         return self
 
 
+class ServiceContractCore(BaseModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
+    status: Literal['PLANNED', 'ACTIVE', 'SUSPENDED', 'CANCELLED', 'ENDED'] = 'ACTIVE'
+    startDate: date | None = None
+    endDate: date | None = None
+    ownerId: str = Field(default='', pattern=r'^([1-9][0-9]*)?$')
+    externalId: str = Field(default='', max_length=200)
+    notes: str = ''
+
+    @model_validator(mode='after')
+    def dates(self):
+        if self.startDate and self.endDate and self.endDate < self.startDate:
+            raise ValueError('Contract end date must be on or after start date')
+        return self
+
+
 class ServiceInput(BaseModel):
     name: str = Field(default='', max_length=200)
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
@@ -76,6 +92,7 @@ class ServiceInput(BaseModel):
     responsible: str = ''
     customerContact: str = ''
     configuration: dict[str, str] = Field(default_factory=dict)
+    contractCore: ServiceContractCore | None = None
 
 
 def items(payload):
@@ -191,14 +208,16 @@ def persist(path, data):
 
 async def write_live(service, resource, record, token, record_id):
     """Use the uploaded OpenAPI's body wrapper, relation refs and detail endpoints."""
-    contract = resource in {'useCases', 'projects'}
+    contract = resource in {'useCases', 'projects', 'serviceInstances'}
     endpoint = '/contracts' if contract else '/servicecontracts'
     detail_key = 'contractDetails' if contract else 'serviceDetails'
     detail_endpoint = '/contractdetails' if contract else '/servicedetails'
-    allowed = {'id', 'name', 'status', 'startDate', 'endDate', 'owner', 'parentcontract', 'product', 'objectitem', 'deactivated'} if contract else {'id', 'contract', 'objectitem', 'deactivated'}
+    allowed = {'id', 'name', 'status', 'startDate', 'endDate', 'owner', 'parentcontract', 'product', 'objectitem', 'deactivated', 'externalId', 'notes', 'serviceContracts'} if contract else {'id', 'contract', 'objectitem', 'deactivated'}
     body = {k: v for k, v in record.items() if k in allowed}
     for k in ['owner', 'parentcontract', 'product', 'objectitem', 'contract']:
         if body.get(k): body[k] = {'id': str(body[k]['id'])}
+    if body.get('serviceContracts'):
+        body['serviceContracts'] = [{'id': str(r['id'])} for r in body['serviceContracts']]
     for k in ['startDate', 'endDate']:
         if body.get(k) and len(body[k]) == 10: body[k] += 'T00:00:00Z'
     response = await service.client.request('PUT' if record_id else 'POST', endpoint + (f'/{record_id}' if record_id else ''), token, json={'body': body} if contract else body)

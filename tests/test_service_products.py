@@ -58,11 +58,13 @@ def test_create_from_product_and_reload(client):
     assert created['useCaseId'] == uc['id']
     raw = json.loads(fixture.read_text())
     record = next(s for s in raw['servicecontracts'] if str(s['id']) == created['id'])
-    assert record['contract'] == {'id': uc['id']}
+    assert record['contract'] == {'id': created['contractId']}
     assert record['objectitem'] == {'id': '1401'}
     assert 'product' not in record and 'serviceType' not in record
     assert next(d['value'] for d in record['serviceDetails'] if d['attributeName'] == 'sourceProductId') == '1151'
-    parent = next(c for c in raw['contracts'] if str(c['id']) == uc['id'])
+    parent = next(c for c in raw['contracts'] if str(c['id']) == created['contractId'])
+    assert parent['parentcontract'] == {'id': uc['id']}
+    assert str(parent['product']['id']) == '1151'
     assert {'id': record['id']} in parent['serviceContracts']
     service = SemanticService(str(ROOT / 'config/semantics.json'), None, use_mock_data=True, mock_data_path=str(fixture))
     reloaded = asyncio.run(service.load_resource('services', ''))
@@ -98,7 +100,8 @@ def test_names_do_not_define_semantics(client):
     fixture.write_text(json.dumps(raw))
     rows = api.get('/api/v1/resources/services').json()
     row = next(s for s in rows if s['productId'] == '1151')
-    assert row['name'] == 'Custom hosting package'
+    assert row['productName'] == 'Custom hosting package'
+    assert row['name'] == 'Technical Operations'
     assert row['objectType'] == 'TECHNICAL_OPERATIONS'
 
 
@@ -120,15 +123,19 @@ def test_live_service_creation_uses_only_existing_dto_fields():
     result = asyncio.run(create_service(service, ServiceInput(useCaseId='1001', productId='1151', objectItemId='1401', status='RUNNING'), 'token'))
     assert result['id'] == '2500'
     writes = [c for c in client.calls if c[0] == 'POST']
-    assert writes[0][1] == '/servicecontracts'
-    assert writes[0][2] == {'contract': {'id': '1001'}, 'objectitem': {'id': '1401'}, 'deactivated': False}
-    assert any(path == '/servicedetails' and body['attributeName'] == 'sourceProductId' and body['value'] == '1151' for _, path, body in writes[1:])
+    assert writes[0][1] == '/contracts'
+    assert writes[0][2]['body']['product'] == {'id': '1151'}
+    assert writes[0][2]['body']['parentcontract'] == {'id': '1001'}
+    assert writes[1][1] == '/servicecontracts'
+    assert writes[1][2] == {'contract': {'id': '2500'}, 'objectitem': {'id': '1401'}, 'deactivated': False}
+    assert any(path == '/servicedetails' and body.get('attributeName') == 'sourceProductId' and body['value'] == '1151' for _, path, body in writes[1:])
 
 
 def test_native_generated_service_resolves_through_unique_product_objectitem(client):
     api, fixture = client
     raw = json.loads(fixture.read_text())
     record = next(s for s in raw['servicecontracts'] if s['id'] == 2401)
+    record['contract'] = {'id': 1001}  # Legacy instance directly under the Use Case.
     record['serviceDetails'] = [d for d in record['serviceDetails'] if d['attributeName'] != 'sourceProductId']
     fixture.write_text(json.dumps(raw))
     services = api.get('/api/v1/resources/services').json()
@@ -166,7 +173,7 @@ def test_update_service_preserves_product_and_other_services(client):
     raw = json.loads(fixture.read_text())
     record = next(s for s in raw['servicecontracts'] if s['id'] == 2401)
     assert record['objectitem'] == {'id': 1401}
-    assert record['contract'] == {'id': 1001}
+    assert record['contract'] == {'id': current['contractId']}
     assert next(d['value'] for d in record['serviceDetails'] if d['attributeName'] == 'sourceProductId') == '1151'
     assert api.put('/api/v1/resources/services/999999', json=body).status_code == 404
     unchanged = fixture.read_text()
@@ -194,6 +201,65 @@ def test_live_service_update_puts_existing_record_and_details():
     result = asyncio.run(create_service(service, ServiceInput(name='Renamed instance', useCaseId='1001', productId='1151', objectItemId='1401', status='MAINTENANCE', configuration={'supportWindow':'24/7'}), 'token', '2401'))
     assert result['name'] == 'Renamed instance'
     writes = [c for c in client.calls if c[0] in {'PUT', 'POST'}]
-    assert writes[0][0:2] == ('PUT', '/servicecontracts/2401')
+    assert writes[0][0:2] == ('PUT', '/contracts/1601')
+    assert writes[0][2]['body']['name'] == 'Renamed instance'
+    assert writes[1][0:2] == ('PUT', '/servicecontracts/2401')
     assert any(method == 'PUT' and path.startswith('/servicedetails/') and body['attributeName']=='supportWindow' and body['value']=='24/7' for method,path,body in writes)
     assert all(path != '/servicecontracts' for _,path,_ in writes)
+
+
+def test_contract_core_update_is_scoped_to_service_contract(client):
+    api, fixture = client
+    before = json.loads(fixture.read_text())
+    original_use_case = next(c for c in before['contracts'] if c['id'] == 1001)
+    original_other = next(c for c in before['contracts'] if c['id'] == 1602)
+    service = next(s for s in api.get('/api/v1/resources/services').json() if s['id'] == '2401')
+    body = dict(name='Hosting contract 2027', useCaseId='1001', productId='1151', objectItemId='1401', status='RUNNING', configuration=service['configuration'], contractCore=dict(status='SUSPENDED', startDate='2027-01-01', endDate='2027-12-31', ownerId='900', externalId='PFEFF-HOST-2027', notes='New service agreement'))
+    response = api.put('/api/v1/resources/services/2401', json=body)
+    assert response.status_code == 200, response.text
+    result = response.json()
+    assert result['contractId'] == '1601'
+    assert result['contractCore'] == body['contractCore']
+    assert result['name'] == body['name']
+    after = json.loads(fixture.read_text())
+    contract = next(c for c in after['contracts'] if c['id'] == 1601)
+    assert contract['name'] == body['name']
+    assert contract['status'] == 'SUSPENDED'
+    assert contract['owner'] == {'id': '900'}
+    assert str(contract['product']['id']) == '1151'
+    assert next(c for c in after['contracts'] if c['id'] == 1001) == original_use_case
+    assert next(c for c in after['contracts'] if c['id'] == 1602) == original_other
+    reloaded = api.get('/api/v1/portal/bootstrap').json()
+    assert next(s for s in reloaded['services'] if s['id']=='2401')['contractCore'] == body['contractCore']
+    snapshot = fixture.read_text()
+    body['contractCore']['endDate'] = '2026-01-01'
+    assert api.put('/api/v1/resources/services/2401', json=body).status_code == 422
+    assert fixture.read_text() == snapshot
+    body['contractCore'].update(endDate='2027-12-31', ownerId='999999')
+    assert api.put('/api/v1/resources/services/2401', json=body).status_code == 422
+    assert fixture.read_text() == snapshot
+
+
+def test_legacy_service_migrates_on_save_without_changing_use_case(client):
+    api, fixture = client
+    raw = json.loads(fixture.read_text())
+    raw['contracts'] = [c for c in raw['contracts'] if c['id'] != 1601]
+    record = next(s for s in raw['servicecontracts'] if s['id']==2401)
+    record['contract'] = {'id':1001}
+    parent = next(c for c in raw['contracts'] if c['id']==1001)
+    parent['serviceContracts'].append({'id':2401})
+    fixture.write_text(json.dumps(raw))
+    service = next(s for s in api.get('/api/v1/resources/services').json() if s['id']=='2401')
+    assert service['contractId'] is None
+    result = api.put('/api/v1/resources/services/2401', json=dict(name='Migrated service', useCaseId='1001', productId='1151', objectItemId='1401', configuration=service['configuration']))
+    assert result.status_code==200,result.text
+    cid=result.json()['contractId'];assert cid and cid!='1001'
+    after=json.loads(fixture.read_text())
+    updated_parent=next(c for c in after['contracts'] if c['id']==1001)
+    assert updated_parent['name']==parent['name']
+    assert updated_parent['product']==parent['product']
+    assert {'id':2401} not in updated_parent['serviceContracts']
+    child=next(c for c in after['contracts'] if str(c['id'])==cid)
+    assert child['parentcontract']=={'id':'1001'}
+    assert {'id':2401} in child['serviceContracts']
+    assert next(s for s in after['servicecontracts'] if s['id']==2401)['contract']=={'id':cid}

@@ -133,19 +133,28 @@ A Use Case can contain several ServiceContracts. Each service is created from a 
 | Sales Processes | SALES_PROCESSES |
 | Correction Services | CORRECTION_SERVICES |
 
-Canonical instance links remain `ServiceContract.contract → Use Case Contract` and `ServiceContract.objectitem → selected Product ObjectItem`. `ServiceContractDTO` has no Product field, so new instances persist the Product ID in a ServiceDetail named `sourceProductId`. Native iCore-generated instances without that field resolve through unique SERVICE Product/ObjectItem membership. Ambiguous membership requires explicit provenance; names never determine semantics.
+Each service owns a Contract referencing its SERVICE Product and its parent Use Case Contract. Its ServiceContract references that service Contract and the selected Product ObjectItem. Existing instances directly attached to a Use Case remain readable and receive an own SERVICE Contract when saved. `sourceProductId` in ServiceDetails is retained as legacy provenance; new instances resolve their Product through Contract.product. Ambiguous legacy ObjectItem membership requires explicit provenance; names never determine semantics.
 
 - `GET /api/v1/resources/serviceProducts`: available SERVICE Products and their ObjectItems/attributes.
 - `GET /api/v1/resources/services`: resolved Use Case service instances.
 - `POST /api/v1/resources/services`: create from `{useCaseId, productId, objectItemId, status, responsible, customerContact, configuration}`.
 - Bootstrap includes `services` and `serviceProducts`. KPIs carry `serviceId` to keep service dashboards separate.
 
-Creation validates the parent is a Use Case, the Product is type SERVICE, and the selected ObjectItem belongs to that Product. Configuration keys come from ObjectItem attributes, and reserved provenance fields cannot be overridden. A Product/ObjectItem pair can have multiple named instances per Use Case. Instance editing is supported; service deletion is not exposed. Live creation uses existing `/servicecontracts` and `/servicedetails` APIs; no Product field or new DTO is sent upstream.
+Creation validates the parent is a Use Case, the Product is type SERVICE, and the selected ObjectItem belongs to that Product. Configuration keys come from ObjectItem attributes, and reserved provenance fields cannot be overridden. A Product/ObjectItem pair can have multiple named instances per Use Case. Instance editing is supported; service deletion is not exposed. Live creation uses existing `/contracts`, `/servicecontracts` and `/servicedetails` APIs. The Product field belongs to ContractDTO, and ServiceContractDTO receives only its canonical Contract/ObjectItem relationships.
 
 The mock JSON includes three SERVICE Products, three distinct ObjectItems, three generated ServiceContracts and six service-specific KPI samples for Pfefferminzia. Mock persistence remains atomic in a single worker. Live iCore was not contacted during validation.
 
 ### Service updates and additional instances
 
-`PUT /api/v1/resources/services/{id}` updates instance name, status, responsible, customer contact and ObjectItem configuration. It preserves Product/ObjectItem/Use Case identity and all unrelated ServiceDetails. New and updated names are stored as `instanceName` ServiceDetails, with the Product name as the display fallback. Updates use the existing iCore PUT APIs and reuse detail IDs.
+`PUT /api/v1/resources/services/{id}` updates instance name, status, responsible, customer contact and ObjectItem configuration. It preserves Product/ObjectItem/Use Case identity and all unrelated ServiceDetails. Names are saved on the service Contract, with `instanceName` ServiceDetails retained for legacy compatibility. Updates use the existing iCore PUT APIs and reuse detail IDs.
 
 Several instances of the same SERVICE Product/ObjectItem can now belong to one Use Case, for example Technical Operations DEV and Technical Operations PRD. The previous one-instance restriction has been removed. Service deletion remains unavailable.
+
+
+### Service Contract core data (v0.7.1)
+
+The service create/update body accepts `contractCore: {status, startDate, endDate, ownerId, externalId, notes}` in addition to `name` and operational fields. Contract status is PLANNED / ACTIVE / SUSPENDED / CANCELLED / ENDED; operational status remains a separate service field. End date must follow start date; dates may be null, and ownerId is an existing Partner ID or blank.
+
+For an existing service, the proxy calls `PUT /contracts/{contractId}` with the OpenAPI `{body: ContractDTO}` wrapper, then writes operational details through `/servicecontracts` and `/servicedetails`. Product and Use Case parent relationships stay fixed. New services first create an own SERVICE Contract with `POST /contracts`. Legacy services directly linked to a Use Case are migrated on save; mock migration and update persist atomically. Live operations use several API calls: partial failure reports the saved Contract ID and requires a reload before retrying. Live iCore server validation remains outstanding.
+
+The sample JSON now has three SERVICE Contracts below Use Case 1001 (1601–1603), each owning one of the existing ServiceContracts. ServiceContract IDs and their KPI references are preserved. Deploy frontend and proxy together; read-only loading does not migrate existing data.

@@ -160,15 +160,6 @@
       ],
       "serviceContracts": [
         {
-          "id": 2401
-        },
-        {
-          "id": 2402
-        },
-        {
-          "id": 2403
-        },
-        {
           "id": 2301
         },
         {
@@ -497,6 +488,218 @@
         },
         {
           "id": 2103
+        }
+      ]
+    },
+    {
+      "id": 1601,
+      "name": "Technical Operations",
+      "status": "ACTIVE",
+      "parentcontract": {
+        "id": 1001
+      },
+      "product": {
+        "id": 1151,
+        "name": "technical-operations",
+        "displayName": "Technical Operations",
+        "description": "Hosting, monitoring, deployments and incident response for the sales platform.",
+        "producttype": {
+          "id": 5,
+          "name": "SERVICE"
+        },
+        "objectitems": [
+          {
+            "id": 1401,
+            "name": "Technical Operations",
+            "objectType": "TECHNICAL_OPERATIONS",
+            "attributes": [
+              {
+                "id": 1501,
+                "varName": "devUrl",
+                "name": "DEV URL",
+                "type": "URL",
+                "required": false,
+                "readonly": false
+              },
+              {
+                "id": 1502,
+                "varName": "stgUrl",
+                "name": "STG URL",
+                "type": "URL",
+                "required": false,
+                "readonly": false
+              },
+              {
+                "id": 1503,
+                "varName": "prdUrl",
+                "name": "PRD URL",
+                "type": "URL",
+                "required": false,
+                "readonly": false
+              },
+              {
+                "id": 1504,
+                "varName": "supportWindow",
+                "name": "Support window",
+                "type": "STRING",
+                "required": false,
+                "readonly": false
+              }
+            ]
+          }
+        ],
+        "deactivated": false
+      },
+      "objectitem": {
+        "id": 1401
+      },
+      "owner": {
+        "id": 501
+      },
+      "startDate": "2026-01-01",
+      "endDate": "2026-12-31",
+      "externalId": "SERVICE-PFEFFERMINZIA-1",
+      "notes": "Service agreement for the Pfefferminzia sales platform.",
+      "deactivated": false,
+      "serviceContracts": [
+        {
+          "id": 2401
+        }
+      ]
+    },
+    {
+      "id": 1602,
+      "name": "Sales Processes",
+      "status": "ACTIVE",
+      "parentcontract": {
+        "id": 1001
+      },
+      "product": {
+        "id": 1152,
+        "name": "sales-processes",
+        "displayName": "Sales Processes",
+        "description": "Broker lead qualification, opportunity management and sales workflow execution.",
+        "producttype": {
+          "id": 5,
+          "name": "SERVICE"
+        },
+        "objectitems": [
+          {
+            "id": 1402,
+            "name": "Sales Processes",
+            "objectType": "SALES_PROCESSES",
+            "attributes": [
+              {
+                "id": 1511,
+                "varName": "processUrl",
+                "name": "Sales workspace URL",
+                "type": "URL",
+                "required": false,
+                "readonly": false
+              },
+              {
+                "id": 1512,
+                "varName": "processOwner",
+                "name": "Process owner",
+                "type": "STRING",
+                "required": false,
+                "readonly": false
+              },
+              {
+                "id": 1513,
+                "varName": "supportedChannels",
+                "name": "Supported channels",
+                "type": "STRING",
+                "required": false,
+                "readonly": false
+              }
+            ]
+          }
+        ],
+        "deactivated": false
+      },
+      "objectitem": {
+        "id": 1402
+      },
+      "owner": {
+        "id": 501
+      },
+      "startDate": "2026-01-01",
+      "endDate": "2026-12-31",
+      "externalId": "SERVICE-PFEFFERMINZIA-2",
+      "notes": "Service agreement for the Pfefferminzia sales platform.",
+      "deactivated": false,
+      "serviceContracts": [
+        {
+          "id": 2402
+        }
+      ]
+    },
+    {
+      "id": 1603,
+      "name": "Correction Services",
+      "status": "ACTIVE",
+      "parentcontract": {
+        "id": 1001
+      },
+      "product": {
+        "id": 1153,
+        "name": "correction-services",
+        "displayName": "Correction Services",
+        "description": "Manual review and correction of incomplete customer and sales data.",
+        "producttype": {
+          "id": 5,
+          "name": "SERVICE"
+        },
+        "objectitems": [
+          {
+            "id": 1403,
+            "name": "Correction Services",
+            "objectType": "CORRECTION_SERVICES",
+            "attributes": [
+              {
+                "id": 1521,
+                "varName": "queueUrl",
+                "name": "Correction workspace URL",
+                "type": "URL",
+                "required": false,
+                "readonly": false
+              },
+              {
+                "id": 1522,
+                "varName": "slaHours",
+                "name": "Target turnaround (hours)",
+                "type": "NUMBER",
+                "required": false,
+                "readonly": false
+              },
+              {
+                "id": 1523,
+                "varName": "reviewTeam",
+                "name": "Review team",
+                "type": "STRING",
+                "required": false,
+                "readonly": false
+              }
+            ]
+          }
+        ],
+        "deactivated": false
+      },
+      "objectitem": {
+        "id": 1403
+      },
+      "owner": {
+        "id": 501
+      },
+      "startDate": "2026-01-01",
+      "endDate": "2026-12-31",
+      "externalId": "SERVICE-PFEFFERMINZIA-3",
+      "notes": "Service agreement for the Pfefferminzia sales platform.",
+      "deactivated": false,
+      "serviceContracts": [
+        {
+          "id": 2403
         }
       ]
     }
@@ -954,7 +1157,7 @@
     {
       "id": 2401,
       "contract": {
-        "id": 1001
+        "id": 1601
       },
       "objectitem": {
         "id": 1401
@@ -1006,7 +1209,7 @@
     {
       "id": 2402,
       "contract": {
-        "id": 1001
+        "id": 1602
       },
       "objectitem": {
         "id": 1402
@@ -1053,7 +1256,7 @@
     {
       "id": 2403,
       "contract": {
-        "id": 1001
+        "id": 1603
       },
       "objectitem": {
         "id": 1403

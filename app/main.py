@@ -8,7 +8,7 @@ from .semantics import SemanticService
 from .settings import Settings, get_settings
 from .mutations import UseCaseInput, ProjectInput, WorkInput, ServiceInput, mutate
 
-app = FastAPI(title="insinno Service Portal Proxy", version="0.7.0")
+app = FastAPI(title="insinno Service Portal Proxy", version="0.7.1")
 
 settings = get_settings()
 app.add_middleware(

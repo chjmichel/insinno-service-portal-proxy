@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Semantic mapping for the insinno Service Portal. Stable portal concepts are derived from generic iCore entities by semantic type discriminators.",
   "discriminators": {
     "productType": "product.producttype.name",
@@ -113,7 +113,7 @@
         "productReference": "serviceDetails[sourceProductId].value, or unique SERVICE Product.objectitems membership for native generation",
         "productType": "SERVICE",
         "objectItem": "objectitem.id must belong to source Product.objectitems",
-        "parent": "contract.id references USE_CASE"
+        "parent": "ServiceContract.contract -> SERVICE Contract.parentcontract -> USE_CASE"
       }
     }
   },
@@ -405,9 +405,9 @@
   "serviceModel": {
     "definition": "Product.producttype.name = SERVICE",
     "differentiation": "Product.objectitems[].objectType",
-    "instance": "ServiceContract",
-    "productProvenanceAttribute": "sourceProductId",
-    "useCaseRelationship": "ServiceContract.contract",
+    "instance": "Contract(productType=SERVICE) with contained ServiceContract",
+    "productProvenanceAttribute": "SERVICE Contract.product; sourceProductId remains a legacy fallback",
+    "useCaseRelationship": "SERVICE Contract.parentcontract references USE_CASE Contract",
     "rule": "Each selected SERVICE Product/ObjectItem creates a ServiceContract. Business names never determine service semantics."
   }
 }
