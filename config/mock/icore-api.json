@@ -158,7 +158,35 @@
           "valueLabel": "Reengineering and continuous operation of the Pfefferminzia broker sales solution."
         }
       ],
-      "serviceContracts": []
+      "serviceContracts": [
+        {
+          "id": 2401
+        },
+        {
+          "id": 2402
+        },
+        {
+          "id": 2403
+        },
+        {
+          "id": 2301
+        },
+        {
+          "id": 2302
+        },
+        {
+          "id": 2303
+        },
+        {
+          "id": 2304
+        },
+        {
+          "id": 2305
+        },
+        {
+          "id": 2306
+        }
+      ]
     },
     {
       "id": 1002,
@@ -920,6 +948,686 @@
         {
           "attributeName": "progress",
           "value": "0"
+        }
+      ]
+    },
+    {
+      "id": 2401,
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1401
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "sourceProductId",
+          "value": "1151",
+          "valueLabel": "1151"
+        },
+        {
+          "attributeName": "serviceStatus",
+          "value": "RUNNING",
+          "valueLabel": "RUNNING"
+        },
+        {
+          "attributeName": "responsible",
+          "value": "Michael Schneider",
+          "valueLabel": "Michael Schneider"
+        },
+        {
+          "attributeName": "customerContact",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "devUrl",
+          "value": "https://dev-makler-vertriebstools.pfefferminzia.example",
+          "valueLabel": "https://dev-makler-vertriebstools.pfefferminzia.example"
+        },
+        {
+          "attributeName": "stgUrl",
+          "value": "https://stg-makler-vertriebstools.pfefferminzia.example",
+          "valueLabel": "https://stg-makler-vertriebstools.pfefferminzia.example"
+        },
+        {
+          "attributeName": "prdUrl",
+          "value": "https://makler-vertriebstools.pfefferminzia.example",
+          "valueLabel": "https://makler-vertriebstools.pfefferminzia.example"
+        },
+        {
+          "attributeName": "supportWindow",
+          "value": "Monday–Friday, 08:00–18:00 CET",
+          "valueLabel": "Monday–Friday, 08:00–18:00 CET"
+        }
+      ],
+      "deactivated": false
+    },
+    {
+      "id": 2402,
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1402
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "sourceProductId",
+          "value": "1152",
+          "valueLabel": "1152"
+        },
+        {
+          "attributeName": "serviceStatus",
+          "value": "RUNNING",
+          "valueLabel": "RUNNING"
+        },
+        {
+          "attributeName": "responsible",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "customerContact",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "processUrl",
+          "value": "https://makler-vertriebstools.pfefferminzia.example/sales",
+          "valueLabel": "https://makler-vertriebstools.pfefferminzia.example/sales"
+        },
+        {
+          "attributeName": "processOwner",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "supportedChannels",
+          "value": "Broker portal, partner referrals",
+          "valueLabel": "Broker portal, partner referrals"
+        }
+      ],
+      "deactivated": false
+    },
+    {
+      "id": 2403,
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1403
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "sourceProductId",
+          "value": "1153",
+          "valueLabel": "1153"
+        },
+        {
+          "attributeName": "serviceStatus",
+          "value": "PARTLY_RUNNING",
+          "valueLabel": "PARTLY_RUNNING"
+        },
+        {
+          "attributeName": "responsible",
+          "value": "Laura König",
+          "valueLabel": "Laura König"
+        },
+        {
+          "attributeName": "customerContact",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "queueUrl",
+          "value": "https://makler-vertriebstools.pfefferminzia.example/corrections",
+          "valueLabel": "https://makler-vertriebstools.pfefferminzia.example/corrections"
+        },
+        {
+          "attributeName": "slaHours",
+          "value": "8",
+          "valueLabel": "8"
+        },
+        {
+          "attributeName": "reviewTeam",
+          "value": "Pfefferminzia Data Quality Team",
+          "valueLabel": "Pfefferminzia Data Quality Team"
+        }
+      ],
+      "deactivated": false
+    },
+    {
+      "id": 2301,
+      "name": "Availability",
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1399,
+        "name": "Service KPI",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Availability"
+        },
+        {
+          "attributeName": "serviceId",
+          "value": "2401"
+        },
+        {
+          "attributeName": "value",
+          "value": "99.98"
+        },
+        {
+          "attributeName": "unit",
+          "value": "PERCENT"
+        },
+        {
+          "attributeName": "target",
+          "value": "99.9"
+        },
+        {
+          "attributeName": "health",
+          "value": "good"
+        }
+      ]
+    },
+    {
+      "id": 2302,
+      "name": "Open incidents",
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1399,
+        "name": "Service KPI",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Open incidents"
+        },
+        {
+          "attributeName": "serviceId",
+          "value": "2401"
+        },
+        {
+          "attributeName": "value",
+          "value": "1"
+        },
+        {
+          "attributeName": "unit",
+          "value": "COUNT"
+        },
+        {
+          "attributeName": "target",
+          "value": "0"
+        },
+        {
+          "attributeName": "health",
+          "value": "warning"
+        }
+      ]
+    },
+    {
+      "id": 2303,
+      "name": "Qualified leads today",
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1399,
+        "name": "Service KPI",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Qualified leads today"
+        },
+        {
+          "attributeName": "serviceId",
+          "value": "2402"
+        },
+        {
+          "attributeName": "value",
+          "value": "128"
+        },
+        {
+          "attributeName": "unit",
+          "value": "COUNT"
+        },
+        {
+          "attributeName": "target",
+          "value": "100"
+        },
+        {
+          "attributeName": "health",
+          "value": "good"
+        }
+      ]
+    },
+    {
+      "id": 2304,
+      "name": "Conversion rate",
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1399,
+        "name": "Service KPI",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Conversion rate"
+        },
+        {
+          "attributeName": "serviceId",
+          "value": "2402"
+        },
+        {
+          "attributeName": "value",
+          "value": "24.8"
+        },
+        {
+          "attributeName": "unit",
+          "value": "PERCENT"
+        },
+        {
+          "attributeName": "target",
+          "value": "20"
+        },
+        {
+          "attributeName": "health",
+          "value": "good"
+        }
+      ]
+    },
+    {
+      "id": 2305,
+      "name": "Pending corrections",
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1399,
+        "name": "Service KPI",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Pending corrections"
+        },
+        {
+          "attributeName": "serviceId",
+          "value": "2403"
+        },
+        {
+          "attributeName": "value",
+          "value": "17"
+        },
+        {
+          "attributeName": "unit",
+          "value": "COUNT"
+        },
+        {
+          "attributeName": "target",
+          "value": "10"
+        },
+        {
+          "attributeName": "health",
+          "value": "warning"
+        }
+      ]
+    },
+    {
+      "id": 2306,
+      "name": "Average correction time",
+      "contract": {
+        "id": 1001
+      },
+      "objectitem": {
+        "id": 1399,
+        "name": "Service KPI",
+        "objectType": "KPI_DEFINITION"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Average correction time"
+        },
+        {
+          "attributeName": "serviceId",
+          "value": "2403"
+        },
+        {
+          "attributeName": "value",
+          "value": "3.2"
+        },
+        {
+          "attributeName": "unit",
+          "value": "HOURS"
+        },
+        {
+          "attributeName": "target",
+          "value": "8"
+        },
+        {
+          "attributeName": "health",
+          "value": "good"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": 1101,
+      "externalId": "PRODUCT-USECASE-PFEFFERMINZIA-SALES",
+      "name": "Pfefferminzia-Sales-tool",
+      "displayName": "Pfefferminzia Sales Tool",
+      "description": "Digital sales workspace for brokers, providing customer, opportunity and product-oriented sales support.",
+      "producttype": {
+        "id": 1,
+        "name": "USE_CASE",
+        "displayName": "Use Case"
+      },
+      "productstatus": {
+        "id": 1,
+        "name": "ACTIVE",
+        "displayName": "Active"
+      }
+    },
+    {
+      "id": 1102,
+      "externalId": "PRODUCT-PROJECT-REENGINEERING",
+      "name": "reengineering",
+      "displayName": "Reengineering",
+      "description": "Structured reengineering of the existing broker sales tool with modernization of architecture, UX and automated quality assurance.",
+      "producttype": {
+        "id": 2,
+        "name": "PROJECT",
+        "displayName": "Project"
+      },
+      "productstatus": {
+        "id": 1,
+        "name": "ACTIVE",
+        "displayName": "Active"
+      }
+    },
+    {
+      "id": 1151,
+      "name": "technical-operations",
+      "displayName": "Technical Operations",
+      "description": "Hosting, monitoring, deployments and incident response for the sales platform.",
+      "producttype": {
+        "id": 5,
+        "name": "SERVICE"
+      },
+      "objectitems": [
+        {
+          "id": 1401,
+          "name": "Technical Operations",
+          "objectType": "TECHNICAL_OPERATIONS",
+          "attributes": [
+            {
+              "id": 1501,
+              "varName": "devUrl",
+              "name": "DEV URL",
+              "type": "URL",
+              "required": false,
+              "readonly": false
+            },
+            {
+              "id": 1502,
+              "varName": "stgUrl",
+              "name": "STG URL",
+              "type": "URL",
+              "required": false,
+              "readonly": false
+            },
+            {
+              "id": 1503,
+              "varName": "prdUrl",
+              "name": "PRD URL",
+              "type": "URL",
+              "required": false,
+              "readonly": false
+            },
+            {
+              "id": 1504,
+              "varName": "supportWindow",
+              "name": "Support window",
+              "type": "STRING",
+              "required": false,
+              "readonly": false
+            }
+          ]
+        }
+      ],
+      "deactivated": false
+    },
+    {
+      "id": 1152,
+      "name": "sales-processes",
+      "displayName": "Sales Processes",
+      "description": "Broker lead qualification, opportunity management and sales workflow execution.",
+      "producttype": {
+        "id": 5,
+        "name": "SERVICE"
+      },
+      "objectitems": [
+        {
+          "id": 1402,
+          "name": "Sales Processes",
+          "objectType": "SALES_PROCESSES",
+          "attributes": [
+            {
+              "id": 1511,
+              "varName": "processUrl",
+              "name": "Sales workspace URL",
+              "type": "URL",
+              "required": false,
+              "readonly": false
+            },
+            {
+              "id": 1512,
+              "varName": "processOwner",
+              "name": "Process owner",
+              "type": "STRING",
+              "required": false,
+              "readonly": false
+            },
+            {
+              "id": 1513,
+              "varName": "supportedChannels",
+              "name": "Supported channels",
+              "type": "STRING",
+              "required": false,
+              "readonly": false
+            }
+          ]
+        }
+      ],
+      "deactivated": false
+    },
+    {
+      "id": 1153,
+      "name": "correction-services",
+      "displayName": "Correction Services",
+      "description": "Manual review and correction of incomplete customer and sales data.",
+      "producttype": {
+        "id": 5,
+        "name": "SERVICE"
+      },
+      "objectitems": [
+        {
+          "id": 1403,
+          "name": "Correction Services",
+          "objectType": "CORRECTION_SERVICES",
+          "attributes": [
+            {
+              "id": 1521,
+              "varName": "queueUrl",
+              "name": "Correction workspace URL",
+              "type": "URL",
+              "required": false,
+              "readonly": false
+            },
+            {
+              "id": 1522,
+              "varName": "slaHours",
+              "name": "Target turnaround (hours)",
+              "type": "NUMBER",
+              "required": false,
+              "readonly": false
+            },
+            {
+              "id": 1523,
+              "varName": "reviewTeam",
+              "name": "Review team",
+              "type": "STRING",
+              "required": false,
+              "readonly": false
+            }
+          ]
+        }
+      ],
+      "deactivated": false
+    }
+  ],
+  "objectitems": [
+    {
+      "id": 1201,
+      "name": "Sales Tool Use Case",
+      "objectType": "USE_CASE",
+      "shortname": "USE_CASE"
+    },
+    {
+      "id": 1202,
+      "name": "Reengineering Project",
+      "objectType": "PROJECT",
+      "shortname": "PROJECT"
+    },
+    {
+      "id": 1301,
+      "name": "Project Epic",
+      "objectType": "EPIC"
+    },
+    {
+      "id": 1302,
+      "name": "Project Milestone",
+      "objectType": "MILESTONE"
+    },
+    {
+      "id": 1304,
+      "name": "KPI Definition",
+      "objectType": "KPI_DEFINITION"
+    },
+    {
+      "id": 1401,
+      "name": "Technical Operations",
+      "objectType": "TECHNICAL_OPERATIONS",
+      "attributes": [
+        {
+          "id": 1501,
+          "varName": "devUrl",
+          "name": "DEV URL",
+          "type": "URL",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": 1502,
+          "varName": "stgUrl",
+          "name": "STG URL",
+          "type": "URL",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": 1503,
+          "varName": "prdUrl",
+          "name": "PRD URL",
+          "type": "URL",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": 1504,
+          "varName": "supportWindow",
+          "name": "Support window",
+          "type": "STRING",
+          "required": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": 1402,
+      "name": "Sales Processes",
+      "objectType": "SALES_PROCESSES",
+      "attributes": [
+        {
+          "id": 1511,
+          "varName": "processUrl",
+          "name": "Sales workspace URL",
+          "type": "URL",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": 1512,
+          "varName": "processOwner",
+          "name": "Process owner",
+          "type": "STRING",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": 1513,
+          "varName": "supportedChannels",
+          "name": "Supported channels",
+          "type": "STRING",
+          "required": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": 1403,
+      "name": "Correction Services",
+      "objectType": "CORRECTION_SERVICES",
+      "attributes": [
+        {
+          "id": 1521,
+          "varName": "queueUrl",
+          "name": "Correction workspace URL",
+          "type": "URL",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": 1522,
+          "varName": "slaHours",
+          "name": "Target turnaround (hours)",
+          "type": "NUMBER",
+          "required": false,
+          "readonly": false
+        },
+        {
+          "id": 1523,
+          "varName": "reviewTeam",
+          "name": "Review team",
+          "type": "STRING",
+          "required": false,
+          "readonly": false
         }
       ]
     }

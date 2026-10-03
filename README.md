@@ -122,3 +122,24 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8010 --reload
 ```
 
 Tests (isolated temporary mock file): `python -m pip install pytest`, then `python -m pytest -q`.
+
+## Services created from Products (v0.7.0)
+
+A Use Case can contain several ServiceContracts. Each service is created from a separate Product with `producttype.name = SERVICE`; the Product's ObjectItem defines its semantic role and configurable attributes. The demo catalog contains:
+
+| Product | ObjectItem.objectType |
+| --- | --- |
+| Technical Operations | TECHNICAL_OPERATIONS |
+| Sales Processes | SALES_PROCESSES |
+| Correction Services | CORRECTION_SERVICES |
+
+Canonical instance links remain `ServiceContract.contract → Use Case Contract` and `ServiceContract.objectitem → selected Product ObjectItem`. `ServiceContractDTO` has no Product field, so new instances persist the Product ID in a ServiceDetail named `sourceProductId`. Native iCore-generated instances without that field resolve through unique SERVICE Product/ObjectItem membership. Ambiguous membership requires explicit provenance; names never determine semantics.
+
+- `GET /api/v1/resources/serviceProducts`: available SERVICE Products and their ObjectItems/attributes.
+- `GET /api/v1/resources/services`: resolved Use Case service instances.
+- `POST /api/v1/resources/services`: create from `{useCaseId, productId, objectItemId, status, responsible, customerContact, configuration}`.
+- Bootstrap includes `services` and `serviceProducts`. KPIs carry `serviceId` to keep service dashboards separate.
+
+Creation validates the parent is a Use Case, the Product is type SERVICE, and the selected ObjectItem belongs to that Product. Configuration keys come from ObjectItem attributes, and reserved provenance fields cannot be overridden. A Product/ObjectItem pair can be configured once per Use Case. Service editing/deletion is not exposed in this version. Live creation uses existing `/servicecontracts` and `/servicedetails` APIs; no Product field or new DTO is sent upstream.
+
+The mock JSON includes three SERVICE Products, three distinct ObjectItems, three generated ServiceContracts and six service-specific KPI samples for Pfefferminzia. Mock persistence remains atomic in a single worker. Live iCore was not contacted during validation.

@@ -28,6 +28,9 @@ class SemanticService:
         self.mock_data = self._load_json(mock_data_path) if use_mock_data else {}
 
     async def load_resource(self, resource_name: str, token: str) -> list[dict[str, Any]]:
+        if resource_name in {'services', 'serviceProducts'}:
+            from .service_catalog import load_products, load_services
+            return await (load_services(self, token) if resource_name == 'services' else load_products(self, token))
         resource = self.model["resources"][resource_name]
         source = resource["source"]
 
@@ -62,6 +65,13 @@ class SemanticService:
             return cache[key]
 
         for row in rows:
+            if row.get('producttype'):
+                row['producttype'] = await expand(row['producttype'], '/producttypes', 'name')
+            if row.get('objectitems'):
+                row['objectitems'] = [await expand(ref, '/objectitems', 'objectType') for ref in row['objectitems']]
+                for obj in row['objectitems']:
+                    if obj.get('attributes'):
+                        obj['attributes'] = [await expand(ref, '/objectattributes', 'varName') for ref in obj['attributes']]
             for field, path, marker in [('product', '/products', 'producttype'), ('objectitem', '/objectitems', 'objectType'), ('owner', '/partners', 'company')]:
                 if row.get(field): row[field] = await expand(row[field], path, marker)
             product = row.get('product') or {}
@@ -147,8 +157,9 @@ class SemanticService:
             return {
                 "id": str(item.get("id", "")),
                 "projectId": str(contract.get("id", "")),
-                "useCaseId": "",
-                "name": item.get("name") or "",
+                "useCaseId": details.get("useCaseId") or "",
+                "serviceId": str(details.get("serviceId") or ""),
+                "name": details.get("name") or item.get("name") or "",
                 "value": display_value,
                 "target": details.get("target"),
                 "delta": cls._number(details.get("delta"), 0) if details.get("delta") is not None else None,

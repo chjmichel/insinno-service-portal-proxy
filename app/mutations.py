@@ -66,6 +66,17 @@ class WorkInput(BaseModel):
         return self
 
 
+class ServiceInput(BaseModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
+    useCaseId: str = Field(pattern=r'^[1-9][0-9]*$')
+    productId: str = Field(pattern=r'^[1-9][0-9]*$')
+    objectItemId: str = Field(pattern=r'^[1-9][0-9]*$')
+    status: Literal['RUNNING', 'PARTLY_RUNNING', 'OFFLINE', 'MAINTENANCE'] = 'OFFLINE'
+    responsible: str = ''
+    customerContact: str = ''
+    configuration: dict[str, str] = Field(default_factory=dict)
+
+
 def items(payload):
     return payload if isinstance(payload, list) else payload.get('items', payload.get('content', []))
 
@@ -81,6 +92,11 @@ def details_set(record, key, values):
 
 
 async def mutate(service, resource, token, payload=None, record_id=None, delete=False):
+    if resource == 'services':
+        if record_id or delete:
+            raise ICoreError('Service instances currently support creation only', 405)
+        from .service_catalog import create_service
+        return await create_service(service, payload, token)
     if resource not in {'useCases', 'projects', 'epics', 'milestones'}:
         raise ICoreError('Resource is not editable', 404)
     if delete and resource not in {'epics', 'milestones'}:

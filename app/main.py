@@ -6,9 +6,9 @@ from .icore_client import ICoreClient, ICoreError
 from .models import LoginRequest, LoginResponse, SemanticBootstrap
 from .semantics import SemanticService
 from .settings import Settings, get_settings
-from .mutations import UseCaseInput, ProjectInput, WorkInput, mutate
+from .mutations import UseCaseInput, ProjectInput, WorkInput, ServiceInput, mutate
 
-app = FastAPI(title="insinno Service Portal Proxy", version="0.6.2")
+app = FastAPI(title="insinno Service Portal Proxy", version="0.7.0")
 
 settings = get_settings()
 app.add_middleware(
@@ -124,6 +124,8 @@ async def bootstrap(
         epics = await service.load_resource("epics", token)
         kpis = await service.load_resource("kpis", token)
         milestones = await service.load_resource("milestones", token)
+        services = await service.load_resource("services", token)
+        service_products = await service.load_resource("serviceProducts", token)
 
         # KPI records are attached to projects in iCore. Resolve them back to
         # their parent use case for the frontend's operational KPI views.
@@ -132,7 +134,13 @@ async def bootstrap(
             for project in projects
             if project.get("id") and project.get("useCaseId")
         }
+        use_case_ids = {u['id'] for u in use_cases}
+        service_to_use_case = {s['id']: s['useCaseId'] for s in services}
         for kpi in kpis:
+            if kpi.get('serviceId'):
+                kpi['useCaseId'] = service_to_use_case.get(kpi['serviceId'], '')
+            elif kpi.get('projectId') in use_case_ids:
+                kpi['useCaseId'] = kpi['projectId']
             if not kpi.get("useCaseId") and kpi.get("projectId"):
                 kpi["useCaseId"] = project_to_use_case.get(kpi["projectId"], "")
     except ICoreError as exc:
@@ -145,6 +153,8 @@ async def bootstrap(
         epics=epics,
         kpis=kpis,
         milestones=milestones,
+        services=services,
+        serviceProducts=service_products,
     )
 
 
@@ -173,7 +183,7 @@ async def delete_resource(resource_name: str, record_id: str, user: dict = Depen
 
 def validate_input(resource_name, payload):
     from pydantic import ValidationError
-    model = {'useCases': UseCaseInput, 'projects': ProjectInput, 'epics': WorkInput, 'milestones': WorkInput}.get(resource_name)
+    model = {'useCases': UseCaseInput, 'projects': ProjectInput, 'epics': WorkInput, 'milestones': WorkInput, 'services': ServiceInput}.get(resource_name)
     if model is None:
         raise HTTPException(status_code=404, detail='Resource is not editable')
     try:

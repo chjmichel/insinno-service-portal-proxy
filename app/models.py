@@ -24,3 +24,5 @@ class SemanticBootstrap(BaseModel):
     kpis: list[dict[str, Any]]
 
     milestones: list[dict[str, Any]] = Field(default_factory=list)
+    services: list[dict[str, Any]] = Field(default_factory=list)
+    serviceProducts: list[dict[str, Any]] = Field(default_factory=list)

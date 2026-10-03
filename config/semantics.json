@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Semantic mapping for the insinno Service Portal. Stable portal concepts are derived from generic iCore entities by semantic type discriminators.",
   "discriminators": {
     "productType": "product.producttype.name",
@@ -87,6 +87,34 @@
         "objectitem.objectType": "KPI_DEFINITION"
       },
       "semanticType": "KPI_DEFINITION"
+    },
+    "serviceProducts": {
+      "source": {
+        "entity": "ProductDTO",
+        "endpoint": "/products",
+        "method": "GET",
+        "mockKey": "products"
+      },
+      "filters": {
+        "producttype.name": "SERVICE"
+      },
+      "semanticType": "SERVICE"
+    },
+    "services": {
+      "source": {
+        "entity": "ServiceContractDTO",
+        "endpoint": "/servicecontracts",
+        "method": "GET",
+        "mockKey": "servicecontracts"
+      },
+      "filters": {},
+      "semanticType": "SERVICE",
+      "resolution": {
+        "productReference": "serviceDetails[sourceProductId].value, or unique SERVICE Product.objectitems membership for native generation",
+        "productType": "SERVICE",
+        "objectItem": "objectitem.id must belong to source Product.objectitems",
+        "parent": "contract.id references USE_CASE"
+      }
     }
   },
   "types": {
@@ -121,6 +149,14 @@
           "de": "Servicepaket",
           "fr": "Pack de services",
           "es": "Paquete de servicios"
+        }
+      },
+      "SERVICE": {
+        "labels": {
+          "en": "Service",
+          "de": "Service",
+          "fr": "Service",
+          "es": "Servicio"
         }
       }
     },
@@ -189,6 +225,30 @@
           "de": "KPI",
           "fr": "KPI",
           "es": "KPI"
+        }
+      },
+      "TECHNICAL_OPERATIONS": {
+        "labels": {
+          "en": "Technical Operations",
+          "de": "Technischer Betrieb",
+          "fr": "Exploitation technique",
+          "es": "Operaciones técnicas"
+        }
+      },
+      "SALES_PROCESSES": {
+        "labels": {
+          "en": "Sales Processes",
+          "de": "Vertriebsprozesse",
+          "fr": "Processus de vente",
+          "es": "Procesos de venta"
+        }
+      },
+      "CORRECTION_SERVICES": {
+        "labels": {
+          "en": "Correction Services",
+          "de": "Korrekturservices",
+          "fr": "Services de correction",
+          "es": "Servicios de corrección"
         }
       }
     }
@@ -341,5 +401,13 @@
         }
       ]
     }
-  ]
+  ],
+  "serviceModel": {
+    "definition": "Product.producttype.name = SERVICE",
+    "differentiation": "Product.objectitems[].objectType",
+    "instance": "ServiceContract",
+    "productProvenanceAttribute": "sourceProductId",
+    "useCaseRelationship": "ServiceContract.contract",
+    "rule": "Each selected SERVICE Product/ObjectItem creates a ServiceContract. Business names never determine service semantics."
+  }
 }
