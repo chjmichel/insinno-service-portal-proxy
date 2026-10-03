@@ -95,3 +95,30 @@ GET /api/v1/portal/bootstrap
 ```
 
 The mock file intentionally follows iCore DTO shapes. Semantic differentiation is configured in `config/semantics.json` via `product.producttype.name` and `objectitem.objectType`.
+
+
+## Editable portal resources
+
+The existing semantic resource routes also accept writes:
+
+- `POST /api/v1/resources/useCases` — name, customerId (existing Partner ID), description, service status.
+- `POST /api/v1/resources/projects` / `PUT /api/v1/resources/projects/{id}` — useCaseId, name, projectType, status, progress, startDate, targetDate, responsible, projectManager, customerContact, developmentTeam, repositoryUrl, branch.
+- `POST /api/v1/resources/epics` / `PUT` / `DELETE /api/v1/resources/epics/{id}`.
+- `POST /api/v1/resources/milestones` / `PUT` / `DELETE /api/v1/resources/milestones/{id}` — timeline entries.
+
+Epic and timeline bodies contain name, projectId, status, progress, startDate, targetDate and timelineName (default Delivery). Dates use YYYY-MM-DD; progress must be 0–100. Updates send a complete editable form. Parent IDs must reference the correct semantic resource. Writes use the same authentication dependencies as reads.
+
+`GET /api/v1/portal/bootstrap` now includes `milestones`. Multiple named timelines and projects use one shared date scale in the frontend. The mock fixture includes two projects and Delivery / Quality assurance timelines.
+
+In mock mode changes persist atomically to `MOCK_DATA_PATH`. Run a single Uvicorn worker for JSON persistence; concurrent requests within that process are serialized. Keep a copy of the fixture to reset test data. The file must be writable.
+
+Live writes use existing iCore `/contracts`, `/contractdetails`, `/servicecontracts` and `/servicedetails` endpoints. Contract writes use the OpenAPI `{body: ...}` wrapper and relationships use `{id: "..."}` references. Existing Product/ObjectItem definitions are reused; an existing instance of the semantic type is needed to select its definition. ServiceContract names are stored in a ServiceDetail because ServiceContractDTO has no name field. Relation references returned by iCore are expanded for semantic reads. Record/detail saves are multiple upstream calls; a detail failure reports the saved record ID so users can reload before retrying. No live iCore server was used during validation.
+
+Install and run:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8010 --reload
+```
+
+Tests (isolated temporary mock file): `python -m pip install pytest`, then `python -m pytest -q`.

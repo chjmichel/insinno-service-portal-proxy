@@ -319,6 +319,156 @@
         {
           "id": 2053,
           "externalId": "MS-GOLIVE"
+        },
+        {
+          "id": 2100
+        }
+      ]
+    },
+    {
+      "id": 1003,
+      "externalId": "PRJ-QUALITY-ROLLOUT",
+      "name": "Sales Tool Quality & Rollout",
+      "status": "PLANNED",
+      "startDate": "2026-10-05",
+      "endDate": "2027-01-15",
+      "duration": 138,
+      "deactivated": false,
+      "parentcontract": {
+        "id": 1001,
+        "externalId": "UC-PFEFFERMINZIA-SALES-TOOL",
+        "name": "Pfefferminzia-Sales-tool"
+      },
+      "owner": {
+        "id": 900,
+        "company": "insinno GmbH",
+        "firstname": "Michael",
+        "lastname": "Schneider",
+        "email": "michael.schneider@insinno.example"
+      },
+      "product": {
+        "id": 1102,
+        "externalId": "PRODUCT-PROJECT-REENGINEERING",
+        "name": "reengineering",
+        "displayName": "Reengineering",
+        "description": "Structured reengineering of the existing broker sales tool with modernization of architecture, UX and automated quality assurance.",
+        "producttype": {
+          "id": 2,
+          "name": "PROJECT",
+          "displayName": "Project"
+        },
+        "productstatus": {
+          "id": 1,
+          "name": "ACTIVE",
+          "displayName": "Active"
+        }
+      },
+      "objectitem": {
+        "id": 1202,
+        "name": "Reengineering Project",
+        "objectType": "PROJECT",
+        "shortname": "PROJECT"
+      },
+      "contractDetails": [
+        {
+          "attributeName": "projectType",
+          "value": "INITIAL_PROJECT",
+          "valueLabel": "INITIAL_PROJECT"
+        },
+        {
+          "attributeName": "projectManager",
+          "value": "Michael Schneider",
+          "valueLabel": "Michael Schneider"
+        },
+        {
+          "attributeName": "customerContact",
+          "value": "Anna Becker",
+          "valueLabel": "Anna Becker"
+        },
+        {
+          "attributeName": "technicalLead",
+          "value": "Laura König",
+          "valueLabel": "Laura König"
+        },
+        {
+          "attributeName": "progress",
+          "value": "10",
+          "valueLabel": "10"
+        },
+        {
+          "attributeName": "phase",
+          "value": "IMPLEMENTATION",
+          "valueLabel": "Implementation"
+        },
+        {
+          "attributeName": "plannedStart",
+          "value": "2026-10-05",
+          "valueLabel": "2026-10-05"
+        },
+        {
+          "attributeName": "plannedEnd",
+          "value": "2027-01-15",
+          "valueLabel": "2027-01-15"
+        },
+        {
+          "attributeName": "repositoryUrl",
+          "value": "https://github.com/chjmichel/pfefferminzia-sales-tool",
+          "valueLabel": "GitHub repository"
+        },
+        {
+          "attributeName": "branch",
+          "value": "development",
+          "valueLabel": "development"
+        },
+        {
+          "attributeName": "testAutomationFramework",
+          "value": "Playwright",
+          "valueLabel": "Playwright"
+        },
+        {
+          "attributeName": "ciPipeline",
+          "value": "GitHub Actions",
+          "valueLabel": "GitHub Actions"
+        }
+      ],
+      "contractDocuments": [
+        {
+          "id": 4101,
+          "externalId": "DOC-TEST-AUTOMATION-PLAN",
+          "name": "Test Automation Plan",
+          "documentType": "TEST_AUTOMATION",
+          "fileName": "test-automation-plan.md",
+          "url": "https://github.com/chjmichel/pfefferminzia-sales-tool/blob/development/docs/test-automation-plan.md",
+          "description": "Scope, test pyramid, browser matrix, fixtures and quality gates for automated tests."
+        },
+        {
+          "id": 4102,
+          "externalId": "DOC-PLAYWRIGHT-SCRIPTS",
+          "name": "Playwright Test Scripts",
+          "documentType": "TEST_AUTOMATION_SCRIPTS",
+          "fileName": "tests/e2e",
+          "url": "https://github.com/chjmichel/pfefferminzia-sales-tool/tree/development/tests/e2e",
+          "description": "Automated end-to-end tests for broker sales journeys and regression scenarios."
+        },
+        {
+          "id": 4103,
+          "externalId": "DOC-REENGINEERING-ARCH",
+          "name": "Reengineering Architecture",
+          "documentType": "ARCHITECTURE",
+          "fileName": "reengineering-architecture.md",
+          "url": "https://github.com/chjmichel/pfefferminzia-sales-tool/blob/development/docs/reengineering-architecture.md",
+          "description": "Target architecture, migration boundaries and integration design."
+        }
+      ],
+      "serviceContracts": [
+        {
+          "id": 2101
+        },
+        {
+          "id": 2102
+        },
+        {
+          "id": 2103
         }
       ]
     }
@@ -466,6 +616,18 @@
           "attributeName": "status",
           "value": "DONE",
           "valueLabel": "Done"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-08-28"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-08-28"
+        },
+        {
+          "attributeName": "timelineName",
+          "value": "Delivery"
         }
       ]
     },
@@ -491,6 +653,18 @@
           "attributeName": "status",
           "value": "PLANNED",
           "valueLabel": "Planned"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-12-04"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-12-04"
+        },
+        {
+          "attributeName": "timelineName",
+          "value": "Delivery"
         }
       ]
     },
@@ -516,6 +690,18 @@
           "attributeName": "status",
           "value": "PLANNED",
           "valueLabel": "Planned"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-12-18"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-12-18"
+        },
+        {
+          "attributeName": "timelineName",
+          "value": "Delivery"
         }
       ]
     },
@@ -566,6 +752,174 @@
           "attributeName": "unit",
           "value": "COUNT",
           "valueLabel": "Tests"
+        }
+      ]
+    },
+    {
+      "id": 2100,
+      "contract": {
+        "id": 1002
+      },
+      "name": "Regression test automation",
+      "objectitem": {
+        "id": 1302,
+        "name": "Project Milestone",
+        "objectType": "MILESTONE"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Regression test automation"
+        },
+        {
+          "attributeName": "timelineName",
+          "value": "Quality assurance"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-09-14"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-11-20"
+        },
+        {
+          "attributeName": "plannedDate",
+          "value": "2026-11-20"
+        },
+        {
+          "attributeName": "status",
+          "value": "PLANNED"
+        },
+        {
+          "attributeName": "progress",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "id": 2101,
+      "contract": {
+        "id": 1003
+      },
+      "name": "Pilot rollout",
+      "objectitem": {
+        "id": 1302,
+        "name": "Project Milestone",
+        "objectType": "MILESTONE"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Pilot rollout"
+        },
+        {
+          "attributeName": "timelineName",
+          "value": "Delivery"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-11-23"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-12-11"
+        },
+        {
+          "attributeName": "plannedDate",
+          "value": "2026-12-11"
+        },
+        {
+          "attributeName": "status",
+          "value": "PLANNED"
+        },
+        {
+          "attributeName": "progress",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "id": 2102,
+      "contract": {
+        "id": 1003
+      },
+      "name": "Broker acceptance tests",
+      "objectitem": {
+        "id": 1302,
+        "name": "Project Milestone",
+        "objectType": "MILESTONE"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Broker acceptance tests"
+        },
+        {
+          "attributeName": "timelineName",
+          "value": "Quality assurance"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2026-10-05"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2026-11-20"
+        },
+        {
+          "attributeName": "plannedDate",
+          "value": "2026-11-20"
+        },
+        {
+          "attributeName": "status",
+          "value": "PLANNED"
+        },
+        {
+          "attributeName": "progress",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "id": 2103,
+      "contract": {
+        "id": 1003
+      },
+      "name": "Production handover",
+      "objectitem": {
+        "id": 1302,
+        "name": "Project Milestone",
+        "objectType": "MILESTONE"
+      },
+      "serviceDetails": [
+        {
+          "attributeName": "name",
+          "value": "Production handover"
+        },
+        {
+          "attributeName": "timelineName",
+          "value": "Delivery"
+        },
+        {
+          "attributeName": "startDate",
+          "value": "2027-01-15"
+        },
+        {
+          "attributeName": "endDate",
+          "value": "2027-01-15"
+        },
+        {
+          "attributeName": "plannedDate",
+          "value": "2027-01-15"
+        },
+        {
+          "attributeName": "status",
+          "value": "PLANNED"
+        },
+        {
+          "attributeName": "progress",
+          "value": "0"
         }
       ]
     }

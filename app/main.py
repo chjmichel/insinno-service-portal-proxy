@@ -6,6 +6,7 @@ from .icore_client import ICoreClient, ICoreError
 from .models import LoginRequest, LoginResponse, SemanticBootstrap
 from .semantics import SemanticService
 from .settings import Settings, get_settings
+from .mutations import UseCaseInput, ProjectInput, WorkInput, mutate
 
 app = FastAPI(title="insinno Service Portal Proxy", version="0.6.2")
 
@@ -122,6 +123,7 @@ async def bootstrap(
         projects = await service.load_resource("projects", token)
         epics = await service.load_resource("epics", token)
         kpis = await service.load_resource("kpis", token)
+        milestones = await service.load_resource("milestones", token)
 
         # KPI records are attached to projects in iCore. Resolve them back to
         # their parent use case for the frontend's operational KPI views.
@@ -142,4 +144,39 @@ async def bootstrap(
         projects=projects,
         epics=epics,
         kpis=kpis,
+        milestones=milestones,
     )
+
+
+
+async def write_resource(resource_name, payload, record_id, delete, user, service):
+    try:
+        return await mutate(service, resource_name, user.get('_token', ''), payload, record_id, delete)
+    except ICoreError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+
+
+@app.post('/api/v1/resources/{resource_name}', status_code=201)
+async def create_resource(resource_name: str, payload: dict, user: dict = Depends(require_user), service: SemanticService = Depends(semantic_service)):
+    return await write_resource(resource_name, validate_input(resource_name, payload), None, False, user, service)
+
+
+@app.put('/api/v1/resources/{resource_name}/{record_id}')
+async def update_resource(resource_name: str, record_id: str, payload: dict, user: dict = Depends(require_user), service: SemanticService = Depends(semantic_service)):
+    return await write_resource(resource_name, validate_input(resource_name, payload), record_id, False, user, service)
+
+
+@app.delete('/api/v1/resources/{resource_name}/{record_id}')
+async def delete_resource(resource_name: str, record_id: str, user: dict = Depends(require_user), service: SemanticService = Depends(semantic_service)):
+    return await write_resource(resource_name, None, record_id, True, user, service)
+
+
+def validate_input(resource_name, payload):
+    from pydantic import ValidationError
+    model = {'useCases': UseCaseInput, 'projects': ProjectInput, 'epics': WorkInput, 'milestones': WorkInput}.get(resource_name)
+    if model is None:
+        raise HTTPException(status_code=404, detail='Resource is not editable')
+    try:
+        return model.model_validate(payload)
+    except ValidationError as exc:
+        raise HTTPException(status_code=422, detail='; '.join(e['msg'] for e in exc.errors())) from exc

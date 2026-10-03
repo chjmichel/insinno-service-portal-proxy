@@ -1,5 +1,5 @@
 from typing import Any
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class LoginRequest(BaseModel):
@@ -22,3 +22,5 @@ class SemanticBootstrap(BaseModel):
     projects: list[dict[str, Any]]
     epics: list[dict[str, Any]]
     kpis: list[dict[str, Any]]
+
+    milestones: list[dict[str, Any]] = Field(default_factory=list)

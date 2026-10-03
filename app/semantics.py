@@ -21,6 +21,7 @@ class SemanticService:
         use_mock_data: bool = False,
         mock_data_path: str = "config/mock/icore-api.json",
     ) -> None:
+        self.mock_data_path = mock_data_path
         self.client = client
         self.use_mock_data = use_mock_data
         self.model = self._load_json(config_path)
@@ -33,11 +34,7 @@ class SemanticService:
         if self.use_mock_data:
             payload = self.mock_data.get(source["mockKey"], [])
         else:
-            payload = await self.client.request(
-                source.get("method", "GET"),
-                source["endpoint"],
-                token,
-            )
+            payload = await self.live_records(source["endpoint"], token)
 
         if isinstance(payload, dict):
             payload = payload.get("items", payload.get("content", []))
@@ -47,9 +44,33 @@ class SemanticService:
         filtered = [
             item
             for item in payload
-            if self._matches_filters(item, resource.get("filters", {}))
+            if not item.get("deactivated") and self._matches_filters(item, resource.get("filters", {}))
         ]
         return [self._normalize(resource_name, item) for item in filtered]
+
+    async def live_records(self, endpoint, token):
+        payload = await self.client.request('GET', endpoint, token)
+        rows = payload if isinstance(payload, list) else payload.get('items', payload.get('content', []))
+        cache = {}
+
+        async def expand(ref, path, marker):
+            if not isinstance(ref, dict) or not ref.get('id') or marker in ref:
+                return ref
+            key = (path, str(ref['id']))
+            if key not in cache:
+                cache[key] = await self.client.request('GET', f"{path}/{ref['id']}", token)
+            return cache[key]
+
+        for row in rows:
+            for field, path, marker in [('product', '/products', 'producttype'), ('objectitem', '/objectitems', 'objectType'), ('owner', '/partners', 'company')]:
+                if row.get(field): row[field] = await expand(row[field], path, marker)
+            product = row.get('product') or {}
+            if product.get('producttype'):
+                product['producttype'] = await expand(product['producttype'], '/producttypes', 'name')
+            for field, path in [('contractDetails', '/contractdetails'), ('serviceDetails', '/servicedetails')]:
+                if field in row:
+                    row[field] = [await expand(ref, path, 'attributeName') for ref in row[field]]
+        return rows
 
     @classmethod
     def _normalize(cls, resource_name: str, item: dict[str, Any]) -> dict[str, Any]:
@@ -63,7 +84,7 @@ class SemanticService:
                 "name": item.get("name") or product.get("displayName") or product.get("name") or "",
                 "type": (product.get("producttype") or {}).get("name") or "USE_CASE",
                 "category": product.get("displayName") or "Service",
-                "description": product.get("description") or details.get("summary") or "",
+                "description": details.get("summary") or product.get("description") or "",
                 "status": details.get("serviceStatus") or cls._service_status(item.get("status")),
                 "currentProject": details.get("currentProject"),
                 "customerAction": details.get("customerAction"),
@@ -84,7 +105,8 @@ class SemanticService:
                 "progress": cls._number(details.get("progress"), 0),
                 "startDate": item.get("startDate") or details.get("plannedStart") or "",
                 "targetDate": item.get("endDate") or details.get("plannedEnd") or "",
-                "responsible": responsible,
+                "responsible": details.get("responsible") or responsible,
+                **{k: details.get(k, "") for k in ["projectType", "customerContact", "repositoryUrl", "branch"]},
                 "projectManager": details.get("projectManager"),
                 "developmentTeam": details.get("developmentTeam") or details.get("technicalLead"),
             }
@@ -95,10 +117,11 @@ class SemanticService:
             return {
                 "id": str(item.get("id", "")),
                 "projectId": str(contract.get("id", "")),
-                "name": item.get("name") or "",
+                "name": details.get("name") or item.get("name") or "",
                 "status": details.get("status") or "PLANNED",
                 "progress": cls._number(details.get("progress"), 0),
                 "targetDate": details.get("endDate") or details.get("plannedDate") or "",
+                "startDate": details.get("startDate") or details.get("endDate") or "",
             }
 
         if resource_name == "milestones":
@@ -107,9 +130,12 @@ class SemanticService:
             return {
                 "id": str(item.get("id", "")),
                 "projectId": str(contract.get("id", "")),
-                "name": item.get("name") or "",
+                "name": details.get("name") or item.get("name") or "",
                 "status": details.get("status") or "PLANNED",
-                "targetDate": details.get("plannedDate") or "",
+                "targetDate": details.get("endDate") or details.get("plannedDate") or "",
+                "startDate": details.get("startDate") or details.get("plannedDate") or "",
+                "timelineName": details.get("timelineName") or "Delivery",
+                "progress": cls._number(details.get("progress"), 0),
             }
 
         if resource_name == "kpis":
@@ -171,3 +197,4 @@ class SemanticService:
                 return None
             current = current.get(part)
         return current
+

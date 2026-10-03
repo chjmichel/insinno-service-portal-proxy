@@ -58,12 +58,14 @@ class ICoreClient:
         token: str,
         *,
         params: dict[str, Any] | None = None,
+        json: Any = None,
     ) -> Any:
         response = await self._request(
             method,
             path,
             headers=self._bearer(token),
             params=params,
+            json=json,
         )
         return self._json(response)
 
@@ -93,3 +95,4 @@ class ICoreClient:
         if not response.content:
             return {}
         return response.json()
+
