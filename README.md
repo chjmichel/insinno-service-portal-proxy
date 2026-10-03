@@ -140,6 +140,12 @@ Canonical instance links remain `ServiceContract.contract → Use Case Contract`
 - `POST /api/v1/resources/services`: create from `{useCaseId, productId, objectItemId, status, responsible, customerContact, configuration}`.
 - Bootstrap includes `services` and `serviceProducts`. KPIs carry `serviceId` to keep service dashboards separate.
 
-Creation validates the parent is a Use Case, the Product is type SERVICE, and the selected ObjectItem belongs to that Product. Configuration keys come from ObjectItem attributes, and reserved provenance fields cannot be overridden. A Product/ObjectItem pair can be configured once per Use Case. Service editing/deletion is not exposed in this version. Live creation uses existing `/servicecontracts` and `/servicedetails` APIs; no Product field or new DTO is sent upstream.
+Creation validates the parent is a Use Case, the Product is type SERVICE, and the selected ObjectItem belongs to that Product. Configuration keys come from ObjectItem attributes, and reserved provenance fields cannot be overridden. A Product/ObjectItem pair can have multiple named instances per Use Case. Instance editing is supported; service deletion is not exposed. Live creation uses existing `/servicecontracts` and `/servicedetails` APIs; no Product field or new DTO is sent upstream.
 
 The mock JSON includes three SERVICE Products, three distinct ObjectItems, three generated ServiceContracts and six service-specific KPI samples for Pfefferminzia. Mock persistence remains atomic in a single worker. Live iCore was not contacted during validation.
+
+### Service updates and additional instances
+
+`PUT /api/v1/resources/services/{id}` updates instance name, status, responsible, customer contact and ObjectItem configuration. It preserves Product/ObjectItem/Use Case identity and all unrelated ServiceDetails. New and updated names are stored as `instanceName` ServiceDetails, with the Product name as the display fallback. Updates use the existing iCore PUT APIs and reuse detail IDs.
+
+Several instances of the same SERVICE Product/ObjectItem can now belong to one Use Case, for example Technical Operations DEV and Technical Operations PRD. The previous one-instance restriction has been removed. Service deletion remains unavailable.

@@ -67,6 +67,7 @@ class WorkInput(BaseModel):
 
 
 class ServiceInput(BaseModel):
+    name: str = Field(default='', max_length=200)
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
     useCaseId: str = Field(pattern=r'^[1-9][0-9]*$')
     productId: str = Field(pattern=r'^[1-9][0-9]*$')
@@ -93,10 +94,10 @@ def details_set(record, key, values):
 
 async def mutate(service, resource, token, payload=None, record_id=None, delete=False):
     if resource == 'services':
-        if record_id or delete:
-            raise ICoreError('Service instances currently support creation only', 405)
+        if delete:
+            raise ICoreError('Service deletion is not supported', 405)
         from .service_catalog import create_service
-        return await create_service(service, payload, token)
+        return await create_service(service, payload, token, record_id)
     if resource not in {'useCases', 'projects', 'epics', 'milestones'}:
         raise ICoreError('Resource is not editable', 404)
     if delete and resource not in {'epics', 'milestones'}:

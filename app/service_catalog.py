@@ -3,6 +3,9 @@
 ServiceContractDTO has no product relationship. sourceProductId is persisted as
 an ordinary ServiceDetail; the actual canonical links stay contract/objectitem.
 """
+import copy
+import math
+
 from .icore_client import ICoreError
 
 
@@ -36,7 +39,7 @@ def service_view(service, record, product, obj):
         'id': str(record['id']), 'useCaseId': str((record.get('contract') or {}).get('id', '')),
         'productId': product['id'], 'productName': product['name'], 'productType': 'SERVICE',
         'objectItemId': obj['id'], 'objectType': obj['objectType'],
-        'name': product['name'], 'description': product['description'],
+        'name': details.get('instanceName') or product['name'], 'description': product['description'],
         'status': details.get('serviceStatus') or 'OFFLINE',
         'responsible': details.get('responsible') or '', 'customerContact': details.get('customerContact') or '',
         'configuration': {a['key']: details.get(a['key'], '') for a in obj['attributes']},
@@ -69,7 +72,7 @@ async def load_services(service, token):
     return result
 
 
-async def create_service(service, payload, token):
+async def create_service(service, payload, token, record_id=None):
     from .mutations import _lock, details_set, persist, write_live
     async with _lock:
         if service.use_mock_data:
@@ -83,33 +86,41 @@ async def create_service(service, payload, token):
         obj = next((o for o in product['objectItems'] if o['id'] == payload.objectItemId), None)
         if not obj:
             raise ICoreError('ObjectItem does not belong to the selected SERVICE Product', 422)
+        existing = await load_services(service, token)
+        current = next((s for s in existing if s['id'] == record_id), None) if record_id else None
+        if record_id and not current:
+            raise ICoreError('Service not found', 404)
+        if current and (current['useCaseId'], current['productId'], current['objectItemId']) != (payload.useCaseId, payload.productId, payload.objectItemId):
+            raise ICoreError('A service update cannot change its Use Case, Product or ObjectItem', 422)
         attrs = {a['key']: a for a in obj['attributes']}
-        reserved = {'sourceProductId', 'serviceStatus', 'responsible', 'customerContact'}
+        reserved = {'sourceProductId', 'instanceName', 'serviceStatus', 'responsible', 'customerContact'}
         for key, value in payload.configuration.items():
             if key in reserved or key not in attrs or attrs[key]['readonly']:
                 raise ICoreError(f'Configuration field is not editable: {key}', 422)
             if attrs[key]['type'] == 'number':
-                try: float(value)
+                try:
+                    if not math.isfinite(float(value)): raise ValueError()
                 except ValueError: raise ICoreError(f'{key} must be a number', 422)
             if attrs[key]['type'] == 'url' and value and not value.startswith(('https://', 'http://')):
                 raise ICoreError(f'{key} must be an http or https URL', 422)
         for key, attr in attrs.items():
             if attr['required'] and not payload.configuration.get(key, '').strip():
                 raise ICoreError(f'Missing required configuration: {key}', 422)
-        existing = await load_services(service, token)
-        if any(s['useCaseId'] == payload.useCaseId and s['productId'] == payload.productId and s['objectItemId'] == payload.objectItemId for s in existing):
-            raise ICoreError('This service Product/ObjectItem is already configured for this use case', 409)
-        record = {'contract': {'id': payload.useCaseId}, 'objectitem': {'id': payload.objectItemId}, 'deactivated': False}
-        details_set(record, 'serviceDetails', {'sourceProductId': payload.productId, 'serviceStatus': payload.status,
+        rows = service.mock_data.setdefault('servicecontracts', []) if service.use_mock_data else await service.live_records('/servicecontracts', token)
+        record = copy.deepcopy(next(r for r in rows if str(r['id']) == record_id)) if record_id else {'contract': {'id': payload.useCaseId}, 'objectitem': {'id': payload.objectItemId}, 'deactivated': False}
+        details_set(record, 'serviceDetails', {'sourceProductId': payload.productId, 'instanceName': payload.name, 'serviceStatus': payload.status,
                                              'responsible': payload.responsible, 'customerContact': payload.customerContact,
                                              **payload.configuration})
         if service.use_mock_data:
-            rows = service.mock_data.setdefault('servicecontracts', [])
-            record['id'] = max([int(r.get('id', 0)) for r in rows] + [0]) + 1
-            rows.append(record)
+            if record_id:
+                rows[next(i for i, r in enumerate(rows) if str(r['id']) == record_id)] = record
+            else:
+                record['id'] = max([int(r.get('id', 0)) for r in rows] + [0]) + 1
+                rows.append(record)
             parent = next(c for c in service.mock_data['contracts'] if str(c['id']) == payload.useCaseId)
-            parent.setdefault('serviceContracts', []).append({'id': record['id']})
+            if not record_id:
+                parent.setdefault('serviceContracts', []).append({'id': record['id']})
             persist(service.mock_data_path, service.mock_data)
         else:
-            await write_live(service, 'services', record, token, None)
+            await write_live(service, 'services', record, token, record_id)
         return service_view(service, record, product, obj)

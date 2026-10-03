@@ -67,7 +67,10 @@ def test_create_from_product_and_reload(client):
     service = SemanticService(str(ROOT / 'config/semantics.json'), None, use_mock_data=True, mock_data_path=str(fixture))
     reloaded = asyncio.run(service.load_resource('services', ''))
     assert any(s == created for s in reloaded)
-    assert api.post('/api/v1/resources/services', json=payload).status_code == 409
+    additional = api.post('/api/v1/resources/services', json={**payload, 'name': 'Additional technical operations'})
+    assert additional.status_code == 201
+    assert additional.json()['id'] != created['id']
+    assert additional.json()['name'] == 'Additional technical operations'
 
 
 @pytest.mark.parametrize('changes', [
@@ -143,3 +146,54 @@ def test_fixture_ids_are_unique(client):
     for collection in ['products', 'contracts', 'objectitems', 'servicecontracts']:
         ids = [row['id'] for row in raw[collection]]
         assert len(ids) == len(set(ids)), collection
+
+
+def test_update_service_preserves_product_and_other_services(client):
+    api, fixture = client
+    before = api.get('/api/v1/resources/services').json()
+    current = next(s for s in before if s['id'] == '2401')
+    body = dict(name='Technical Operations DEV', useCaseId=current['useCaseId'], productId=current['productId'], objectItemId=current['objectItemId'], status='MAINTENANCE', responsible='New operator', customerContact='Anna', configuration={**current['configuration'], 'supportWindow': '24/7', 'devUrl': 'https://new-dev.example'})
+    result = api.put('/api/v1/resources/services/2401', json=body)
+    assert result.status_code == 200, result.text
+    updated = result.json()
+    assert updated['name'] == 'Technical Operations DEV'
+    assert updated['status'] == 'MAINTENANCE'
+    assert updated['configuration']['supportWindow'] == '24/7'
+    assert updated['configuration']['prdUrl'] == current['configuration']['prdUrl']
+    after = api.get('/api/v1/resources/services').json()
+    assert next(s for s in after if s['id'] == '2402') == next(s for s in before if s['id'] == '2402')
+    assert len(after) == len(before)
+    raw = json.loads(fixture.read_text())
+    record = next(s for s in raw['servicecontracts'] if s['id'] == 2401)
+    assert record['objectitem'] == {'id': 1401}
+    assert record['contract'] == {'id': 1001}
+    assert next(d['value'] for d in record['serviceDetails'] if d['attributeName'] == 'sourceProductId') == '1151'
+    assert api.put('/api/v1/resources/services/999999', json=body).status_code == 404
+    unchanged = fixture.read_text()
+    assert api.put('/api/v1/resources/services/2401', json={**body, 'productId':'1152','objectItemId':'1402'}).status_code == 422
+    assert fixture.read_text() == unchanged
+
+
+def test_live_service_update_puts_existing_record_and_details():
+    raw = json.loads((ROOT / 'config/mock/icore-api.json').read_text())
+    record = next(s for s in raw['servicecontracts'] if s['id'] == 2401)
+    for i, detail in enumerate(record['serviceDetails']): detail['id'] = 9000 + i
+    class FakeClient:
+        def __init__(self): self.calls = []
+        async def request(self, method, path, token, **kwargs):
+            self.calls.append((method, path, kwargs.get('json')))
+            if method == 'GET':
+                if path == '/products': return raw['products']
+                if path == '/contracts': return raw['contracts']
+                if path == '/servicecontracts': return [record]
+                if path.startswith('/objectitems/'):
+                    return next(o for o in raw['objectitems'] if str(o['id']) == path.split('/')[-1])
+            return {'id': 2401}
+    client = FakeClient()
+    service = SemanticService(str(ROOT / 'config/semantics.json'), client)
+    result = asyncio.run(create_service(service, ServiceInput(name='Renamed instance', useCaseId='1001', productId='1151', objectItemId='1401', status='MAINTENANCE', configuration={'supportWindow':'24/7'}), 'token', '2401'))
+    assert result['name'] == 'Renamed instance'
+    writes = [c for c in client.calls if c[0] in {'PUT', 'POST'}]
+    assert writes[0][0:2] == ('PUT', '/servicecontracts/2401')
+    assert any(method == 'PUT' and path.startswith('/servicedetails/') and body['attributeName']=='supportWindow' and body['value']=='24/7' for method,path,body in writes)
+    assert all(path != '/servicecontracts' for _,path,_ in writes)
